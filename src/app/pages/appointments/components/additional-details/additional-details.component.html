@@ -1,0 +1,13 @@
+<button nbButton (click)="openDialog()" status="secondary">Additional details</button>
+
+<ng-template #detailsDialog>
+  <nb-card>
+    <nb-card-header>Additional details</nb-card-header>
+    <nb-card-body>
+      <div style="width: 500px;">
+        <ng2-smart-table [settings]="settings" [source]="source">
+        </ng2-smart-table>
+      </div>
+    </nb-card-body>
+  </nb-card>
+</ng-template>

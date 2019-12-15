@@ -1,0 +1,31 @@
+{
+    "practioner": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-practitionerdashboar-practioner-113656-authRole",
+            "UnauthRoleArn": "arn:aws:iam::659576105815:role/amplify-practitionerdashboar-practioner-113656-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::659576105815:role/amplify-practitionerdashboar-practioner-113656-authRole",
+            "Region": "ap-south-1",
+            "DeploymentBucketName": "amplify-practitionerdashboar-practioner-113656-deployment",
+            "UnauthRoleName": "amplify-practitionerdashboar-practioner-113656-unauthRole",
+            "StackName": "amplify-practitionerdashboar-practioner-113656",
+            "StackId": "arn:aws:cloudformation:ap-south-1:659576105815:stack/amplify-practitionerdashboar-practioner-113656/c6f04ba0-18b7-11ea-bced-0a6895f2a65c"
+        }
+    },
+    "practenv": {
+        "awscloudformation": {
+            "AuthRoleName": "amplify-practitionerdashboar-practenv-125003-authRole",
+            "UnauthRoleArn": "arn:aws:iam::659576105815:role/amplify-practitionerdashboar-practenv-125003-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::659576105815:role/amplify-practitionerdashboar-practenv-125003-authRole",
+            "Region": "ap-south-1",
+            "DeploymentBucketName": "amplify-practitionerdashboar-practenv-125003-deployment",
+            "UnauthRoleName": "amplify-practitionerdashboar-practenv-125003-unauthRole",
+            "StackName": "amplify-practitionerdashboar-practenv-125003",
+            "StackId": "arn:aws:cloudformation:ap-south-1:659576105815:stack/amplify-practitionerdashboar-practenv-125003/fe072fa0-18c1-11ea-bed6-02abaae9da36"
+        },
+        "categories": {
+            "auth": {
+                "practitionerdashboarb8483781": {}
+            }
+        }
+    }
+}

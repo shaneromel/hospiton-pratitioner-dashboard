@@ -1,0 +1,28 @@
+<nb-card nbSpinnerStatus="primary" [nbSpinner]="loading">
+  <nb-card-header>Book offline appointment</nb-card-header>
+  <nb-card-body>
+    <div class="container">
+      <form #myForm="ngForm" (ngSubmit)="bookAppointment()">
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label>Patient name: </label>
+            <input nbInput fullWidth name="name" [(ngModel)]="name" placeholder="Patient name">
+          </div>
+          <div class="form-group col-md-6">
+            <label>Patient age: </label>
+            <input nbInput fullWidth name="age" type="number" [(ngModel)]="age" placeholder="Patient age">
+          </div>
+          <div class="form-group col-md-6">
+            <label>Phone number: </label>
+            <input nbInput fullWidth name="phone" [(ngModel)]="phone" placeholder="Patient's phone number">
+          </div>
+          <div class="form-group col-md-6">
+            <label>Message: </label>
+            <textarea nbInput fullWidth [(ngModel)]="message" name="message" placeholder="Message"></textarea>
+          </div>
+        </div>
+        <button nbButton status="success">Submit</button>
+      </form>
+    </div>
+  </nb-card-body>
+</nb-card>

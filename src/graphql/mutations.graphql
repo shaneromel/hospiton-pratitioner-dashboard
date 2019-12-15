@@ -1,0 +1,95 @@
+# this is an auto generated file. This will be overwritten
+mutation ConfirmAppointment($appointment_id: String!) {
+  confirmAppointment(appointment_id: $appointment_id) {
+    code
+  }
+}
+mutation CompleteAppointment($appointment_id: String!) {
+  completeAppointment(appointment_id: $appointment_id) {
+    code
+  }
+}
+mutation SetDoctorLocation(
+  $doctor_id: String!
+  $latitude: Float!
+  $longitude: Float!
+) {
+  setDoctorLocation(
+    doctor_id: $doctor_id
+    latitude: $latitude
+    longitude: $longitude
+  ) {
+    code
+  }
+}
+mutation SetHospitalLocation(
+  $hospital_id: String!
+  $latitude: Float!
+  $longitude: Float!
+) {
+  setHospitalLocation(
+    hospital_id: $hospital_id
+    latitude: $latitude
+    longitude: $longitude
+  ) {
+    code
+  }
+}
+mutation AppointmentsChanged($appointment_id: String!) {
+  appointmentsChanged(appointment_id: $appointment_id) {
+    appointment_type
+    doctor_id
+    hospital_id
+    message
+    preferred_timestamp
+    user_id
+    type
+    appointment_status
+    booking_timestamp
+    _id
+    confirm_timestamp
+    complete_timestamp
+    user_name
+    age
+    phone
+  }
+}
+mutation CancelAppointment($appointment_id: String!) {
+  cancelAppointment(appointment_id: $appointment_id) {
+    code
+  }
+}
+mutation UpdateDoctor($data: String!) {
+  updateDoctor(data: $data) {
+    code
+  }
+}
+mutation BookAppointment(
+  $appointment_type: String!
+  $doctor_id: String!
+  $message: String
+  $user_name: String!
+  $age: Int
+  $phone: String
+) {
+  bookAppointment(
+    appointment_type: $appointment_type
+    doctor_id: $doctor_id
+    message: $message
+    user_name: $user_name
+    age: $age
+    phone: $phone
+  ) {
+    code
+  }
+}
+mutation AddDoctor($doctor_id: ID!, $speciality: String!, $charge: Float!) {
+  addDoctor(doctor_id: $doctor_id, speciality: $speciality, charge: $charge) {
+    code
+  }
+}
+mutation RemoveDoctorLocation($doctor_id: ID!) {
+  removeDoctorLocation(doctor_id: $doctor_id) {
+    code
+  }
+}

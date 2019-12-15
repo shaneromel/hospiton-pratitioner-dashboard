@@ -5,6 +5,9 @@ import { UserData } from '../../../@core/data/users';
 import { LayoutService } from '../../../@core/utils';
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Auth } from 'aws-amplify';
+import { ToastrService } from '../../../services/toastr.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'ngx-header',
@@ -43,17 +46,44 @@ export class HeaderComponent implements OnInit, OnDestroy {
   constructor(private sidebarService: NbSidebarService,
               private menuService: NbMenuService,
               private themeService: NbThemeService,
-              private userService: UserData,
+              private toastrService: ToastrService,
               private layoutService: LayoutService,
-              private breakpointService: NbMediaBreakpointsService) {
+              private breakpointService: NbMediaBreakpointsService,
+              private router:Router) {
   }
 
   ngOnInit() {
     this.currentTheme = this.themeService.currentTheme;
 
-    this.userService.getUsers()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((users: any) => this.user = users.nick);
+    this.menuService.onItemClick().subscribe(data=>{
+      switch(data.item.title){
+        case "Log out":
+          Auth.signOut().then(()=>{
+            this.router.navigate(['/auth']);
+          }).catch(err=>{
+            this.toastrService.showToast("danger", "Error", err.message);
+          })
+          break;
+        case "Profile":
+          this.router.navigate(['/pages/profile']);
+          break;
+      }
+    })
+
+    Auth.currentAuthenticatedUser({
+      bypassCache:true
+    }).then(data=>{
+      this.user=data.attributes;
+    }).catch(err=>{
+      this.toastrService.showToast("danger", "Error", err);
+      // Auth.signOut().then(()=>{
+      //   console.log("signed out")
+      // }).catch(err=>{
+      //   console.log("error", err);
+      // })
+      // console.log("error",err);
+
+    })
 
     const { xl } = this.breakpointService.getBreakpointsMap();
     this.themeService.onMediaQueryChange()

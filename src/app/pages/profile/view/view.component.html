@@ -1,0 +1,72 @@
+<div class="row">
+  <div class="col-md-6">
+    <nb-card nbSpinnerStatus="primary" [nbSpinner]="loading">
+      <nb-card-header>Profile</nb-card-header>
+      <nb-card-body>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 offset-md-3">
+            <img [src]="image" class="img-fluid">
+            <button style="margin-top: 5px;" nbButton (click)="fileInput.click()">Choose image</button>
+            <input #fileInput style="display: none;" type="file" (change)="imageSelected($event)">
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:10px;" class="container">
+        <form (ngSubmit)="updateDoctor()">
+          <div class="row">
+            <div class="form-group col-md-6">
+              <label>Name: </label>
+              <input nbInput fullWidth placeholder="Name" name="name" [(ngModel)]="name">
+            </div>
+            <div class="form-group col-md-6">
+              <label>Charge: </label>
+              <input nbInput fullWidth type="number" name="charge" placeholder="Charge" [(ngModel)]="charge">
+            </div>
+            <div class="form-group col-md-6">
+              <label>Speciality: </label>
+              <!-- <input nbInput fullWidth name="speciality" placeholder="Speciality" [(ngModel)]="speciality"> -->
+              <nb-select fullWidth [(selected)]="speciality">
+                <nb-option *ngFor="let s of specialities" value="{{s.title}}">{{s.title}}</nb-option>
+              </nb-select>
+            </div>
+            <div class="form-group col-md-6">
+              <label>Phone: </label>
+              <input nbInput fullWidth name="phone" placeholder="Phone number" [(ngModel)]="phone">
+            </div>
+            <div class="form-group col-md-12">
+              <label>Email: </label>
+              <input nbInput type="email" fullWidth name="email" placeholder="Email" [(ngModel)]="email">
+            </div>
+          </div>
+          <button nbButton status="success">Save</button>
+        </form>
+      </div>
+      </nb-card-body>
+    </nb-card>
+  </div>
+  <div class="col-md-6">
+    <nb-card>
+      <nb-card-header>Other Details: </nb-card-header>
+      <nb-card-body>
+        <ng2-smart-table [settings]="settings" [source]="source">
+        </ng2-smart-table>
+      </nb-card-body>
+    </nb-card>
+  </div>
+  <div class="col-md-12">
+    <nb-card nbSpinnerStatus="primary" [nbSpinner]="locationLoader">
+      <nb-card-header>Set location</nb-card-header>
+      <nb-card-body>
+        <agm-map [usePanning]="true" (mapClick)="placeMarker($event)" [latitude]="lat" [longitude]="lng">
+          <agm-marker [latitude]="lat" [longitude]="lng"></agm-marker>
+        </agm-map>
+      </nb-card-body>
+      <nb-card-footer>
+        <button nbButton (click)="setMarkedLocation()" status="success">Set marked location</button>
+        <button style="margin-left: 5px;" (click)="setCurrentLocation()" nbButton status="warning">Set current location</button>
+        <button style="margin-left: 5px;" (click)="removeLocation()" nbButton status="danger">Remove location</button>
+      </nb-card-footer>
+    </nb-card>
+  </div>
+</div>

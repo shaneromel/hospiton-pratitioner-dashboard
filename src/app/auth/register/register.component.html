@@ -1,0 +1,63 @@
+<nb-card>
+  <nb-card-header>Register as a doctor</nb-card-header>
+  <nb-card-body>
+    <div class="container">
+      <form (ngSubmit)="registerDoctor()">
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label class="label">Name: </label>
+            <input fullWidth nbInput name="name" [(ngModel)]="name" placeholder="Name">
+          </div>
+          <div class="form-group col-md-6">
+            <label class="label">Email: </label>
+            <input fullWidth nbInput name="email" [(ngModel)]="email" placeholder="Email">
+          </div>
+          <div class="form-group col-md-6">
+            <label class="label">Charge per appointment (&#8377;): </label>
+            <input fullWidth nbInput name="charge" [(ngModel)]="charge" placeholder="Charge per appointment">
+          </div>
+          <!-- <div class="form-group col-md-6">
+            <label class="label">Speciality: </label>
+            <input fullWidth nbInput name="speciality" [(ngModel)]="speciality" placeholder="Speciality">
+          </div> -->
+          <div class="form-group col-md-6">
+            <label class="label">Speciality: </label>
+            <nb-select fullWidth [(selected)]="speciality">
+              <nb-option value="1">Select speciality</nb-option>
+              <nb-option *ngFor="let s of specialities" value="{{s.title}}">{{s.title}}</nb-option>
+            </nb-select>
+          </div>
+          <div class="form-group col-md-6">
+            <label class="label">Phone number: </label>
+            <input fullWidth nbInput maxlength = "10" name="phone" [(ngModel)]="phone" placeholder="Phone">
+          </div>
+          <div class="form-group col-md-6">
+            <label class="label">Password: </label>
+            <input fullWidth nbInput name="password" [(ngModel)]="password" type="password" placeholder="Password">
+          </div>
+          <div class="form-group col-md-6">
+            <label class="label">Confirm Password: </label>
+            <input fullWidth nbInput name="confirm-password" [(ngModel)]="confirmPassword" type="password" placeholder="Confirm Password">
+          </div>
+        </div>
+        <small style="display:block;">Already a doctor?<a [routerLink]="['/auth/login']"> Login here</a></small>
+        <button nbButton status="success">Submit</button>
+      </form>
+    </div>
+  </nb-card-body>
+</nb-card>
+
+<ng-template #otpDialog>
+  <nb-card>
+    <nb-card-header>Enter OTP</nb-card-header>
+    <nb-card-body>
+      <form (ngSubmit)="confirmSignUp()">
+        <div class="form-group">
+          <label class="label">OTP: </label>
+          <input nbInput fullWidth name="otp" [(ngModel)]="otp" placeholder="Enter OTP">
+        </div>
+        <button nbButton status="success">Submit</button>
+      </form>
+    </nb-card-body>
+  </nb-card>
+</ng-template>

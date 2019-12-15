@@ -19,7 +19,13 @@ import {
   NbSidebarModule,
   NbToastrModule,
   NbWindowModule,
+  NbCardModule,
 } from '@nebular/theme';
+import Amplify from 'aws-amplify';
+import awsconfig from '../aws-exports';
+import { AmplifyAngularModule, AmplifyService } from 'aws-amplify-angular';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
+Amplify.configure(awsconfig);
 
 @NgModule({
   declarations: [AppComponent],
@@ -28,9 +34,9 @@ import {
     BrowserAnimationsModule,
     HttpClientModule,
     AppRoutingModule,
-
+    AmplifyAngularModule,
     ThemeModule.forRoot(),
-
+    NbEvaIconsModule,
     NbSidebarModule.forRoot(),
     NbMenuModule.forRoot(),
     NbDatepickerModule.forRoot(),
@@ -41,8 +47,10 @@ import {
       messageGoogleMapKey: 'AIzaSyA_wNuCzia92MAmdLRzmqitRGvCF7wCZPY',
     }),
     CoreModule.forRoot(),
+    NbCardModule
   ],
   bootstrap: [AppComponent],
+  providers:[AmplifyService]
 })
 export class AppModule {
 }

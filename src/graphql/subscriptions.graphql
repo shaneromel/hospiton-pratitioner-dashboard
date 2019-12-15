@@ -1,0 +1,20 @@
+# this is an auto generated file. This will be overwritten
+subscription AppointmentsChangedSub($doctor_id: String!) {
+  appointmentsChangedSub(doctor_id: $doctor_id) {
+    appointment_type
+    doctor_id
+    hospital_id
+    message
+    preferred_timestamp
+    user_id
+    type
+    appointment_status
+    booking_timestamp
+    _id
+    confirm_timestamp
+    complete_timestamp
+    user_name
+    age
+    phone
+  }
+}

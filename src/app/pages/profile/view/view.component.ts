@@ -1,0 +1,272 @@
+import { Component, OnInit } from '@angular/core';
+import { Storage, Auth } from 'aws-amplify';
+import { APIService } from '../../../API.service';
+import { ToastrService } from '../../../services/toastr.service';
+import { LocalDataSource } from 'ng2-smart-table';
+
+@Component({
+  selector: 'ngx-view',
+  templateUrl: './view.component.html',
+  styleUrls: ['./view.component.scss']
+})
+export class ViewComponent implements OnInit {
+  image:string;
+  imageFile;
+  doctor:any;
+  name:string;
+  charge:number;
+  speciality:string;
+  isActive:boolean;
+  email:string;
+  phone:string;
+
+  loading:boolean;
+  locationLoader:boolean;
+
+  lat:number;
+  lng:number;
+
+  settings={
+    columns:{
+      key:{
+        filter:false
+      },
+      value:{
+        filter:false,
+        type:"html",
+        valuePrepareFunction:(cell, row)=>{
+          if(row.key === "Status"){
+            return `<strong class="text-${cell === 'ACTIVE' ? 'success' : 'danger'}">${cell}</strong>`
+          }else{
+            return cell;
+          }
+        }
+      }
+    },
+    actions:{
+      add:false,
+      delete:false,
+      edit:false
+    },
+    hideHeader:true,
+    hideSubHeader:true
+  };
+
+  specialities:any;
+  source:LocalDataSource=new LocalDataSource();
+
+  constructor(private apiService:APIService, private toastrService:ToastrService) { 
+    this.image="https://cdn.pixabay.com/photo/2015/03/04/22/35/head-659652_960_720.png";
+    this.loading=false;
+    this.locationLoader=false;
+  }
+
+  ngOnInit() {
+
+    this.apiService.GetSpecialities().then(specialities=>{
+      this.specialities=specialities;
+    })
+
+    Auth.currentAuthenticatedUser({bypassCache:true}).then(data=>{
+      this.apiService.GetDoctorById(data.attributes.sub).then(doctor=>{
+        this.doctor=doctor;
+        this.speciality=doctor.speciality;
+        this.name=doctor.name;
+        this.charge=doctor.charge;
+        this.phone=doctor.phone_number;
+        this.email=doctor.email;
+        this.isActive=doctor.is_active;
+        if(doctor.image){
+          Storage.get(doctor.image).then(url=>{
+            this.image=url as string;
+          }).catch(err=>{
+            this.toastrService.showToast("danger", "Error", err.message);
+          });
+        }
+
+        if(doctor.location){
+          this.lat=doctor.location[1];
+          this.lng=doctor.location[0];
+        }
+
+
+        this.source.load([
+          {
+            key:"Average rating",
+            value:doctor.rating
+          },
+          {
+            key:"Rating count",
+            value:doctor.rating_count
+          },
+          {
+            key:"Profile visits",
+            value:doctor.views
+          },
+          {
+            key:"Status",
+            value:doctor.is_active ? "ACTIVE" : "INACTIVE"
+          },
+        ])
+
+      })
+    })
+  }
+
+  updateDoctor(){
+    this.loading=true;
+    let data={
+      _id:this.doctor._id,
+      charge:this.doctor.charge,
+      speciality:this.speciality,
+      is_active:this.doctor.is_active,
+      rating:this.doctor.rating,
+      rating_count:this.doctor.rating_count,
+      views:this.doctor.views,
+      image:this.doctor.image
+    } as any;
+
+    if(this.imageFile){
+      Storage.put(this.doctor._id, this.imageFile,{
+        contentType: 'image/png'
+      }).then(result=>{
+
+        data.image=(result as any).key;
+
+        if(this.name!=this.doctor.name || this.phone!=this.doctor.phone_number){
+          Auth.currentAuthenticatedUser({bypassCache:true}).then(cognitoUser=>{
+            Auth.updateUserAttributes(cognitoUser, {name:this.name, phone_number:this.phone}).then(()=>{
+              this.apiService.UpdateDoctor(JSON.stringify(data)).then(()=>{
+                this.loading=false;
+                this.toastrService.showToast("success", "Success", "Details successfully updated")
+              }).catch(err=>{
+                this.loading=false;
+                this.toastrService.showToast("danger", "Error", err.message);
+              })
+            }).catch(err=>{
+              this.loading=false;
+              this.toastrService.showToast("danger", "Error", err.message);
+            })
+          }).catch(err=>{
+            this.loading=false;
+            this.toastrService.showToast("danger", "Error", err.message);
+          })
+        }else{
+          this.apiService.UpdateDoctor(JSON.stringify(data)).then(()=>{
+            this.loading=false;
+            this.toastrService.showToast("success", "Success", "Details successfully updated")
+          }).catch(err=>{
+            this.loading=false;
+            this.toastrService.showToast("danger", "Error", err.message);
+          })
+        }
+
+      })
+    }else{
+
+      if(this.name!=this.doctor.name || this.phone!=this.doctor.phone_number){
+        Auth.currentAuthenticatedUser({bypassCache:true}).then(cognitoUser=>{
+          Auth.updateUserAttributes(cognitoUser, {name:this.name, phone_number:this.phone}).then(()=>{
+            this.apiService.UpdateDoctor(JSON.stringify(data)).then(()=>{
+              this.toastrService.showToast("success", "Success", "Details successfully updated")
+              this.loading=false;
+            }).catch(err=>{
+              this.toastrService.showToast("danger", "Error", err.message);
+              this.loading=false;
+            })
+          }).catch(err=>{
+            this.toastrService.showToast("danger", "Error", err.message);
+            this.loading=false;
+          })
+        }).catch(err=>{
+          this.toastrService.showToast("danger", "Error", err.message);
+          this.loading=false;
+        })
+      }else{
+        this.apiService.UpdateDoctor(JSON.stringify(data)).then(()=>{
+          this.toastrService.showToast("success", "Success", "Details successfully updated");
+          this.loading=false;
+        }).catch(err=>{
+          this.toastrService.showToast("danger", "Error", err.message);
+          this.loading=false;
+        })
+      }
+    }
+  }
+
+  imageSelected(event){
+    this.imageFile=event.target.files[0];
+
+    var reader=new FileReader();
+
+    reader.readAsDataURL(this.imageFile);
+
+    reader.onload=ev=>{
+      this.image=(ev.target as any).result;
+    }
+  }
+
+  placeMarker(event){
+    this.lat=event.coords.lat;
+    this.lng=event.coords.lng;
+  }
+
+  setMarkedLocation(){
+    this.locationLoader=true;
+    Auth.currentAuthenticatedUser({bypassCache:true}).then(data=>{
+      if(this.doctor.location){
+        this.apiService.RemoveDoctorLocation(data.username).then(()=>{
+          this.apiService.SetDoctorLocation(data.username, this.lat, this.lng).then(()=>{
+            this.toastrService.showToast("success", "Success", "Location successfully set");
+            this.locationLoader=false;
+          }).catch(err=>{
+            this.toastrService.showToast("danger", "Error", err.message);
+            this.locationLoader=false;
+          })
+        })
+      }else{
+        this.apiService.SetDoctorLocation(data.username, this.lat, this.lng).then(()=>{
+          this.toastrService.showToast("success", "Success", "Location successfully set");
+          this.locationLoader=false;
+        }).catch(err=>{
+          this.toastrService.showToast("danger", "Error", err.message);
+          this.locationLoader=false;
+        })
+      }
+    }).catch(err=>{
+      this.toastrService.showToast("danger", "Error", err.message);
+      this.locationLoader=false;
+    })
+  }
+
+  setCurrentLocation(){
+    this.locationLoader=true;
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(position=>{
+        this.lat=position.coords.latitude;
+        this.lng=position.coords.longitude;
+        this.setMarkedLocation();
+      })
+    }else{
+      this.locationLoader=false;
+    }
+  }
+
+  removeLocation(){
+    if(window.confirm("Are you sure you want to remove your location?")){
+      this.locationLoader=true;
+      Auth.currentAuthenticatedUser({bypassCache:true}).then(data=>{
+        this.apiService.RemoveDoctorLocation(data.username).then(()=>{
+          this.lat=null;
+          this.lng=null;
+          this.toastrService.showToast("success","Success", "Location successfully removed");
+          this.locationLoader=false;
+        }).catch(err=>{
+          this.toastrService.showToast("danger", "Error", err.message);
+          this.locationLoader=false;
+        })
+      })
+    }
+  }
+
+}

@@ -1,0 +1,77 @@
+<nb-card>
+  <nb-card-header>Login</nb-card-header>
+  <nb-card-body>
+    <div class="row">
+      <div class="col-md-6 offset-md-3">
+        <form (ngSubmit)="login()">
+          <div class="form-group">
+            <label class="label">Email/Phone number: </label>
+            <input nbInput fullWidth [(ngModel)]="username" name="username" placeholder="Email/Phone number"> 
+          </div>
+          <div class="form-group">
+            <label class="label">Password: </label>
+            <input nbInput fullWidth [(ngModel)]="password" name="password" placeholder="Password" type="password"> 
+          </div>
+          <small (click)="forgotPassword()" style="cursor: pointer;" class="text-success">Forgot password?</small>
+          <small style="float:right;"><a [routerLink]="['/auth/register']">Sign up here as a doctor</a></small>
+          <button style="display: block;" nbButton status="success">Submit</button>
+        </form>
+      </div>  
+    </div>
+  </nb-card-body>
+</nb-card>
+
+<ng-template #fpUsernameDialog>
+  <nb-card>
+    <nb-card-header>Enter your email</nb-card-header>
+    <nb-card-body>
+      <form (ngSubmit)="submitFpUsername()">
+        <div class="form-group">
+          <label class="label">Email: </label>
+          <input nbInput fullWidth name="fp-user" [(ngModel)]="fpUsername" placeholder="Email">
+        </div>
+        <button nbButton status="success">Submit</button>
+      </form>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+
+<ng-template #fpCodeDialog>
+  <nb-card>
+    <nb-card-header>Enter verification code</nb-card-header>
+    <nb-card-body>
+      <form (ngSubmit)="submitCode()">
+        <div class="row">
+          <div class="form-group col-md-6">
+            <label class="label">Verification code: </label>
+            <input nbInput fullWidth name="code" [(ngModel)]="code" placeholder="Verification code">
+          </div>
+          <div class="form-group col-md-6">
+            <label class="label">New password: </label>
+            <input nbInput fullWidth name="new" type="password" [(ngModel)]="new" placeholder="New password">
+          </div>
+          <div class="form-group col-md-6">
+            <label class="label">Confirm New password: </label>
+            <input nbInput fullWidth name="confirm-new" type="password" [(ngModel)]="confirmNew" placeholder="Confirm New password">
+          </div>
+        </div>
+        <button nbButton status="success">Submit</button>
+      </form>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+
+<ng-template #otpDialog>
+  <nb-card>
+    <nb-card-header>Enter OTP: </nb-card-header>
+    <nb-card-body>
+      <form (ngSubmit)="enterOtp()">
+        <div class="form-group">
+          <label class="label">OTP: </label>
+          <input nbInput fullWidth name="otp" [(ngModel)]="otp" placeholder="OTP">
+        </div>
+        <button nbButton status="success">Submit</button>
+      </form>
+    </nb-card-body>
+  </nb-card>
+</ng-template>

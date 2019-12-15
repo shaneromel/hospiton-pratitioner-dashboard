@@ -1,0 +1,4 @@
+<button nbButton *ngIf="rowData?.appointment_status==='PENDING' || rowData?.appointment_status==='CONFIRMED'; else disabled" status="danger" (click)="cancelAppointment()">Cancel</button>
+<ng-template #disabled>
+  <button nbButton disabled>Cancel</button>
+</ng-template>

@@ -1,0 +1,53 @@
+# this is an auto generated file. This will be overwritten
+query GetAppointmentsByDoctor($doctor_id: String!, $start: Float, $end: Float) {
+  getAppointmentsByDoctor(doctor_id: $doctor_id, start: $start, end: $end) {
+    appointment_type
+    doctor_id
+    hospital_id
+    message
+    preferred_timestamp
+    user_id
+    type
+    appointment_status
+    booking_timestamp
+    _id
+    confirm_timestamp
+    complete_timestamp
+    user_name
+    age
+    phone
+  }
+}
+query GetDoctorById($doctor_id: String!) {
+  getDoctorById(doctor_id: $doctor_id) {
+    rating
+    charge
+    _id
+    rating_count
+    is_active
+    speciality
+    email_verified
+    name
+    phone_number_verified
+    phone_number
+    email
+    views
+    image
+    location
+    schedule {
+      sun
+      mon
+      tue
+      wed
+      thu
+      fri
+      sat
+    }
+  }
+}
+query GetSpecialities {
+  getSpecialities {
+    image
+    title
+  }
+}

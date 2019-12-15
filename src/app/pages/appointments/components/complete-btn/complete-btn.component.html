@@ -1,0 +1,4 @@
+<button nbButton *ngIf="rowData?.appointment_status==='CONFIRMED'; else disabled" status="primary" (click)="completeAppointment()">Complete</button>
+<ng-template #disabled>
+  <button nbButton status="primary" disabled>Complete</button>
+</ng-template>

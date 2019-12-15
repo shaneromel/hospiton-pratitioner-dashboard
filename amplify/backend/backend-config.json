@@ -1,0 +1,21 @@
+{
+	"auth": {
+		"practitionerdashboarb8483781": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation",
+			"dependsOn": []
+		}
+	},
+	"storage": {
+		"s3814eeece": {
+			"service": "S3",
+			"providerPlugin": "awscloudformation"
+		}
+	},
+	"hosting": {
+		"S3AndCloudFront": {
+			"service": "S3AndCloudFront",
+			"providerPlugin": "awscloudformation"
+		}
+	}
+}
