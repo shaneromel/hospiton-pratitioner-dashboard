@@ -38,6 +38,8 @@ query GetDoctorById($doctor_id: String!) {
     reg_no
     reg_year
     degree
+    appointment_type
+    slot_duration
   }
 }
 query GetSpecialities {
@@ -65,5 +67,14 @@ query CountAppointmentsByYear($doctor_id: ID!, $is_online: Boolean) {
     booking_count
     complete_count
     day
+  }
+}
+query GetPractitioner($phone: String!) {
+  getPractitioner(phone: $phone) {
+    sub
+    email_verified
+    phone_number_verified
+    phone_number
+    email
   }
 }

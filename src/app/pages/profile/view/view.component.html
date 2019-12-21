@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-8">
     <nb-card nbSpinnerStatus="primary" [nbSpinner]="loading">
       <nb-card-header>Profile</nb-card-header>
       <nb-card-body>
@@ -16,27 +16,49 @@
         <form (ngSubmit)="updateDoctor()">
           <div class="row">
             <div class="form-group col-md-6">
-              <label>Name: </label>
+              <label class="label">Name: </label>
               <input nbInput fullWidth placeholder="Name" name="name" [(ngModel)]="name">
             </div>
             <div class="form-group col-md-6">
-              <label>Charge: </label>
+              <label class="label">Charge: </label>
               <input nbInput fullWidth type="number" name="charge" placeholder="Charge" [(ngModel)]="charge">
             </div>
             <div class="form-group col-md-6">
-              <label>Speciality: </label>
-              <!-- <input nbInput fullWidth name="speciality" placeholder="Speciality" [(ngModel)]="speciality"> -->
+              <label class="label">Speciality: </label>
               <nb-select fullWidth [(selected)]="speciality">
                 <nb-option *ngFor="let s of specialities" value="{{s.title}}">{{s.title}}</nb-option>
               </nb-select>
             </div>
             <div class="form-group col-md-6">
-              <label>Phone: </label>
+              <label class="label">Phone: </label>
               <input nbInput fullWidth name="phone" placeholder="Phone number" [(ngModel)]="phone">
             </div>
-            <div class="form-group col-md-12">
-              <label>Email: </label>
+            <div class="form-group col-md-6">
+              <label class="label">Email: </label>
               <input nbInput type="email" fullWidth name="email" placeholder="Email" [(ngModel)]="email">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="label">Registration council: </label>
+              <input nbInput fullWidth name="reg-council" placeholder="Registration council" [(ngModel)]="council">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="label">Registration number: </label>
+              <input nbInput fullWidth name="reg-number" placeholder="Registration number" [(ngModel)]="regNumber">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="label">Registration year: </label>
+              <input nbInput fullWidth name="reg-year" placeholder="Registration year" [(ngModel)]="regYear">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="label">Appointment type: </label>
+              <nb-select fullWidth [(selected)]="appointmentType">
+                <nb-option value="SLOT">Slot</nb-option>
+                <nb-option value="QUEUE">Queue</nb-option>
+              </nb-select>
+            </div>
+            <div *ngIf="appointmentType === 'SLOT'" class="form-group col-md-6">
+              <label class="label">Slot duration: </label>
+              <input nbInput fullWidth name="slot-duration" type="number" placeholder="Slot duration" [(ngModel)]="slotDuration">
             </div>
           </div>
           <button nbButton status="success">Save</button>
@@ -45,7 +67,7 @@
       </nb-card-body>
     </nb-card>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-4">
     <nb-card>
       <nb-card-header>Other Details: </nb-card-header>
       <nb-card-body>

@@ -55,6 +55,12 @@ export class ViewComponent implements OnInit {
   specialities:any;
   source:LocalDataSource=new LocalDataSource();
 
+  council:string;
+  regNumber:string;
+  regYear:number;
+  appointmentType:string;
+  slotDuration:number;
+
   constructor(private apiService:APIService, private toastrService:ToastrService) { 
     this.image="https://cdn.pixabay.com/photo/2015/03/04/22/35/head-659652_960_720.png";
     this.loading=false;
@@ -69,6 +75,7 @@ export class ViewComponent implements OnInit {
 
     Auth.currentAuthenticatedUser({bypassCache:true}).then(data=>{
       this.apiService.GetDoctorById(data.attributes.sub).then(doctor=>{
+        console.log(doctor)
         this.doctor=doctor;
         this.speciality=doctor.speciality;
         this.name=doctor.name;
@@ -76,6 +83,11 @@ export class ViewComponent implements OnInit {
         this.phone=doctor.phone_number;
         this.email=doctor.email;
         this.isActive=doctor.is_active;
+        this.regNumber=doctor.reg_no;
+        this.regYear=doctor.reg_year;
+        this.council=doctor.reg_council;
+        this.appointmentType=doctor.appointment_type;
+        this.slotDuration=doctor.slot_duration;
         if(doctor.image){
           Storage.get(doctor.image).then(url=>{
             this.image=url as string;
@@ -115,28 +127,41 @@ export class ViewComponent implements OnInit {
 
   updateDoctor(){
     this.loading=true;
-    let data={
-      _id:this.doctor._id,
-      charge:this.doctor.charge,
-      speciality:this.speciality,
-      is_active:this.doctor.is_active,
-      rating:this.doctor.rating,
-      rating_count:this.doctor.rating_count,
-      views:this.doctor.views,
-      image:this.doctor.image
-    } as any;
+    // let data={
+    //   _id:this.doctor._id,
+    //   charge:this.doctor.charge,
+    //   speciality:this.speciality,
+    //   is_active:this.doctor.is_active,
+    //   rating:this.doctor.rating,
+    //   rating_count:this.doctor.rating_count,
+    //   views:this.doctor.views,
+    //   image:this.doctor.image
+    // } as any;
+    this.doctor.charge=this.doctor.charge;
+    this.doctor.speciality=this.speciality;
+    this.doctor.reg_council=this.council;
+    this.doctor.reg_no=this.regNumber;
+    this.doctor.reg_year=this.regYear;
+    this.doctor.appointment_type=this.appointmentType;
+    if(this.appointmentType==="SLOT" && this.slotDuration){
+      this.doctor.slot_duration=this.slotDuration;
+    }else{
+      this.toastrService.showToast("danger", "Error", "Slot duration has to be mentioned for appointment type slot");
+      this.loading=false;
+      return;
+    }
 
     if(this.imageFile){
       Storage.put(this.doctor._id, this.imageFile,{
         contentType: 'image/png'
       }).then(result=>{
 
-        data.image=(result as any).key;
+        this.doctor.image=(result as any).key;
 
         if(this.name!=this.doctor.name || this.phone!=this.doctor.phone_number){
           Auth.currentAuthenticatedUser({bypassCache:true}).then(cognitoUser=>{
             Auth.updateUserAttributes(cognitoUser, {name:this.name, phone_number:this.phone}).then(()=>{
-              this.apiService.UpdateDoctor(JSON.stringify(data)).then(()=>{
+              this.apiService.UpdateDoctor(JSON.stringify(this.doctor)).then(()=>{
                 this.loading=false;
                 this.toastrService.showToast("success", "Success", "Details successfully updated")
               }).catch(err=>{
@@ -152,7 +177,7 @@ export class ViewComponent implements OnInit {
             this.toastrService.showToast("danger", "Error", err.message);
           })
         }else{
-          this.apiService.UpdateDoctor(JSON.stringify(data)).then(()=>{
+          this.apiService.UpdateDoctor(JSON.stringify(this.doctor)).then(()=>{
             this.loading=false;
             this.toastrService.showToast("success", "Success", "Details successfully updated")
           }).catch(err=>{
@@ -167,7 +192,7 @@ export class ViewComponent implements OnInit {
       if(this.name!=this.doctor.name || this.phone!=this.doctor.phone_number){
         Auth.currentAuthenticatedUser({bypassCache:true}).then(cognitoUser=>{
           Auth.updateUserAttributes(cognitoUser, {name:this.name, phone_number:this.phone}).then(()=>{
-            this.apiService.UpdateDoctor(JSON.stringify(data)).then(()=>{
+            this.apiService.UpdateDoctor(JSON.stringify(this.doctor)).then(()=>{
               this.toastrService.showToast("success", "Success", "Details successfully updated")
               this.loading=false;
             }).catch(err=>{
@@ -183,7 +208,7 @@ export class ViewComponent implements OnInit {
           this.loading=false;
         })
       }else{
-        this.apiService.UpdateDoctor(JSON.stringify(data)).then(()=>{
+        this.apiService.UpdateDoctor(JSON.stringify(this.doctor)).then(()=>{
           this.toastrService.showToast("success", "Success", "Details successfully updated");
           this.loading=false;
         }).catch(err=>{

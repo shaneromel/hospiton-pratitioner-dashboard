@@ -49,9 +49,10 @@ export class ScheduleComponent implements OnInit {
     Auth.currentAuthenticatedUser({bypassCache:true}).then(data=>{
       this.apiService.GetDoctorById(data.username).then(doctor=>{
         this.doctor=doctor;
-        console.log(this.doctor);
+        if(!this.doctor.schedule){
+          this.doctor.schedule={}
+        }
       }).catch(err=>{
-        console.log(err);
         this.toastrService.showToast("danger","Error", err.message);
       })
     }).catch(err=>{
@@ -64,7 +65,6 @@ export class ScheduleComponent implements OnInit {
       this.selectedDay=day;
       if(this.doctor.schedule[day]){
         const schedule=this.doctor.schedule[day];
-        console.log(schedule);
 
         if(schedule.morning){
           this.start1=this.convertMinutes(schedule.morning[0]);
@@ -119,6 +119,7 @@ export class ScheduleComponent implements OnInit {
   }
 
   setSchedule(){
+
     if(this.morning && this.evening){
       this.doctor.schedule[this.selectedDay]={
         morning:this.start1 && this.end1 ? [this.convertToMinutes(this.start1), this.convertToMinutes(this.end1)] : null,
@@ -137,6 +138,7 @@ export class ScheduleComponent implements OnInit {
     }).catch(err=>{
       this.toastrService.showToast("danger", "Error", err.message);
     })
+
   }
 
 

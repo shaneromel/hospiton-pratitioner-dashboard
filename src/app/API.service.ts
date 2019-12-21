@@ -108,6 +108,8 @@ export type GetDoctorByIdQuery = {
   reg_no: string | null;
   reg_year: number | null;
   degree: string | null;
+  appointment_type: string | null;
+  slot_duration: number | null;
 };
 
 export type GetSpecialitiesQuery = {
@@ -135,6 +137,15 @@ export type CountAppointmentsByYearQuery = {
   booking_count: number | null;
   complete_count: number | null;
   day: string;
+};
+
+export type GetPractitionerQuery = {
+  __typename: "Practitioner";
+  sub: string;
+  email_verified: string;
+  phone_number_verified: string;
+  phone_number: string;
+  email: string;
 };
 
 export type AppointmentsChangedSubSubscription = {
@@ -491,6 +502,25 @@ export class APIService {
     )) as any;
     return <CountAppointmentsByYearQuery>response.data.countAppointmentsByYear;
   }
+  async GetPractitioner(phone: string): Promise<GetPractitionerQuery> {
+    const statement = `query GetPractitioner($phone: String!) {
+        getPractitioner(phone: $phone) {
+          __typename
+          sub
+          email_verified
+          phone_number_verified
+          phone_number
+          email
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      phone
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetPractitionerQuery>response.data.getPractitioner;
+  }
   AppointmentsChangedSubListener(
     doctor_id:string
   ): Observable<
@@ -577,6 +607,8 @@ export class APIService {
                 evening
               }
             }
+            appointment_type
+            slot_duration
           }
         }`;
       const gqlAPIServiceArguments: any = {
