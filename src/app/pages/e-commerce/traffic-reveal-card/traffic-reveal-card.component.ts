@@ -2,6 +2,9 @@ import { Component, OnDestroy } from '@angular/core';
 import { TrafficList, TrafficListData } from '../../../@core/data/traffic-list';
 import { TrafficBarData, TrafficBar } from '../../../@core/data/traffic-bar';
 import { takeWhile } from 'rxjs/operators';
+import { APIService } from '../../../API.service';
+import { Auth } from 'aws-amplify';
+import { ToastrService } from '../../../services/toastr.service';
 
 @Component({
   selector: 'ngx-traffic-reveal-card',
@@ -13,14 +16,18 @@ export class TrafficRevealCardComponent implements OnDestroy {
   private alive = true;
 
   trafficBarData: TrafficBar;
-  trafficListData: TrafficList;
+  appointmentData: any[];
   revealed = false;
   period: string = 'week';
+  type:string;
+  loading:boolean;
 
   constructor(private trafficListService: TrafficListData,
-              private trafficBarService: TrafficBarData) {
-    this.getTrafficFrontCardData(this.period);
-    this.getTrafficBackCardData(this.period);
+              private trafficBarService: TrafficBarData,
+              private apiService:APIService,
+              private toastrService:ToastrService) {
+    this.getAppointmentData(this.period);
+    this.type="TOTAL";
   }
 
   toggleView() {
@@ -29,25 +36,48 @@ export class TrafficRevealCardComponent implements OnDestroy {
 
   setPeriodAngGetData(value: string): void {
     this.period = value;
-
-    this.getTrafficFrontCardData(value);
-    this.getTrafficBackCardData(value);
+    this.loading=true;
+    this.getAppointmentData(value);
   }
 
-  getTrafficBackCardData(period: string) {
-    this.trafficBarService.getTrafficBarData(period)
-      .pipe(takeWhile(() => this.alive ))
-      .subscribe(trafficBarData => {
-        this.trafficBarData = trafficBarData;
-      });
+  getAppointmentData(period: string) {
+    Auth.currentAuthenticatedUser({bypassCache:true}).then(user=>{
+      switch(period){
+        case "week":
+          this.apiService.CountAppointments(user.username, this.type === "TOTAL" ? false : true).then(data=>{
+            this.appointmentData=data as any;
+            this.loading=false;
+          }).catch(err=>{
+            this.toastrService.showToast("danger", "Error", err.message);
+            this.loading=false;
+          });
+          break;
+        case "month":
+          this.apiService.CountAppointmentsByMonths(user.username, this.type === "TOTAL" ? false : true).then(data=>{
+            this.appointmentData=data as any;
+            this.loading=false;
+          }).catch(err=>{
+            this.toastrService.showToast("danger", "Error", JSON.stringify(err));
+            this.loading=false;
+          });
+          break;
+        case "year":
+          this.apiService.CountAppointmentsByYear(user.username, this.type === "TOTAL" ? false : true).then(data=>{
+            this.appointmentData=data as any;
+            this.loading=false;
+          }).catch(err=>{
+            console.log(err)
+            this.toastrService.showToast("danger", "Error", JSON.stringify(err));
+            this.loading=false;
+          })
+      }
+    })
   }
 
-  getTrafficFrontCardData(period: string) {
-    this.trafficListService.getTrafficListData(period)
-      .pipe(takeWhile(() => this.alive))
-      .subscribe(trafficListData => {
-        this.trafficListData = trafficListData;
-      });
+  typeChanged(event){
+    this.loading=true;
+    this.type=event;
+    this.getAppointmentData(this.period)
   }
 
   ngOnDestroy() {

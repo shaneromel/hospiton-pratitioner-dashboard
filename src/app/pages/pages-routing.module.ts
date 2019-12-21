@@ -10,14 +10,14 @@ const routes: Routes = [{
   path: '',
   component: PagesComponent,
   children: [
-    // {
-    //   path: 'dashboard',
-    //   component: ECommerceComponent,
-    // },
-    // {
-    //   path: 'iot-dashboard',
-    //   component: DashboardComponent,
-    // },
+    {
+      path: 'dashboard',
+      component: ECommerceComponent,
+    },
+    {
+      path: 'iot-dashboard',
+      component: DashboardComponent,
+    },
     // {
     //   path: 'layout',
     //   loadChildren: () => import('./layout/layout.module')

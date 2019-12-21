@@ -11,9 +11,12 @@ export class TrafficBackCardComponent implements OnDestroy {
 
   private alive = true;
 
-  @Input() trafficBarData: any;
+  @Input() appointmentData: any;
 
   currentTheme: string;
+  labels:string[];
+  data:number[];
+  formatter:string;
 
   constructor(private themeService: NbThemeService) {
     this.themeService.getJsTheme()
@@ -21,6 +24,14 @@ export class TrafficBackCardComponent implements OnDestroy {
       .subscribe(theme => {
         this.currentTheme = theme.name;
     });
+  }
+
+  ngOnChanges(){
+    if(this.appointmentData){
+      this.data=this.appointmentData.map(a=>a.count);
+      this.labels=this.appointmentData.map(a=>a.day);
+    }
+
   }
 
   ngOnDestroy() {

@@ -34,20 +34,36 @@ query GetDoctorById($doctor_id: String!) {
     views
     image
     location
-    schedule {
-      sun
-      mon
-      tue
-      wed
-      thu
-      fri
-      sat
-    }
+    reg_council
+    reg_no
+    reg_year
+    degree
   }
 }
 query GetSpecialities {
   getSpecialities {
     image
     title
+  }
+}
+query CountAppointments($doctor_id: ID!, $is_complete: Boolean) {
+  countAppointments(doctor_id: $doctor_id, is_complete: $is_complete) {
+    booking_count
+    complete_count
+    day
+  }
+}
+query CountAppointmentsByMonths($doctor_id: ID!, $is_online: Boolean) {
+  countAppointmentsByMonths(doctor_id: $doctor_id, is_online: $is_online) {
+    booking_count
+    complete_count
+    day
+  }
+}
+query CountAppointmentsByYear($doctor_id: ID!, $is_online: Boolean) {
+  countAppointmentsByYear(doctor_id: $doctor_id, is_online: $is_online) {
+    booking_count
+    complete_count
+    day
   }
 }

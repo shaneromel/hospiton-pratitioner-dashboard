@@ -1,5 +1,5 @@
 <nb-list>
-  <nb-list-item class="item" *ngFor="let item of frontCardData; trackBy: trackByDate">
+  <!-- <nb-list-item class="item" *ngFor="let item of frontCardData; trackBy: trackByDate">
     <span>{{ item.date }}</span>
     <span>{{ item.value }}</span>
     <span class="delta" [class.up]="item.delta.up" [class.down]="!item.delta.up">
@@ -8,5 +8,15 @@
     </span>
     <ngx-traffic-bar [barData]="item.comparison" [successDelta]="item.delta.up">
     </ngx-traffic-bar>
+  </nb-list-item> -->
+  <nb-list-item class="item">
+    <strong>{{period === "week" ? 'Day' : period === "month" ? 'Month' : 'Year'}}</strong>
+    <strong>Booked</strong>
+    <strong>Completed</strong>
+  </nb-list-item>
+  <nb-list-item class="item" *ngFor="let item of frontCardData; index as i">
+    <span>{{item.day}}</span>
+    <span>{{item.booking_count}}</span>
+    <span>{{item.complete_count}}</span>
   </nb-list-item>
 </nb-list>

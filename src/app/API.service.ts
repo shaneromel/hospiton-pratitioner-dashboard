@@ -104,22 +104,37 @@ export type GetDoctorByIdQuery = {
   views: number | null;
   image: string | null;
   location: Array<number | null> | null;
-  schedule: {
-    __typename: "Schedule";
-    sun: Array<number | null> | null;
-    mon: Array<number | null> | null;
-    tue: Array<number | null> | null;
-    wed: Array<number | null> | null;
-    thu: Array<number | null> | null;
-    fri: Array<number | null> | null;
-    sat: Array<number | null> | null;
-  } | null;
+  reg_council: string | null;
+  reg_no: string | null;
+  reg_year: number | null;
+  degree: string | null;
 };
 
 export type GetSpecialitiesQuery = {
   __typename: "Speciality";
   image: string | null;
   title: string;
+};
+
+export type CountAppointmentsQuery = {
+  __typename: "AppointmentCount";
+  booking_count: number | null;
+  complete_count: number | null;
+  day: string;
+};
+
+export type CountAppointmentsByMonthsQuery = {
+  __typename: "AppointmentCount";
+  booking_count: number | null;
+  complete_count: number | null;
+  day: string;
+};
+
+export type CountAppointmentsByYearQuery = {
+  __typename: "AppointmentCount";
+  booking_count: number | null;
+  complete_count: number | null;
+  day: string;
 };
 
 export type AppointmentsChangedSubSubscription = {
@@ -394,44 +409,6 @@ export class APIService {
     )) as any;
     return <GetAppointmentsByDoctorQuery>response.data.getAppointmentsByDoctor;
   }
-  async GetDoctorById(doctor_id: string): Promise<GetDoctorByIdQuery> {
-    const statement = `query GetDoctorById($doctor_id: String!) {
-        getDoctorById(doctor_id: $doctor_id) {
-          __typename
-          rating
-          charge
-          _id
-          rating_count
-          is_active
-          speciality
-          email_verified
-          name
-          phone_number_verified
-          phone_number
-          email
-          views
-          image
-          location
-          schedule {
-            __typename
-            sun
-            mon
-            tue
-            wed
-            thu
-            fri
-            sat
-          }
-        }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      doctor_id
-    };
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <GetDoctorByIdQuery>response.data.getDoctorById;
-  }
   async GetSpecialities(): Promise<GetSpecialitiesQuery> {
     const statement = `query GetSpecialities {
         getSpecialities {
@@ -442,6 +419,77 @@ export class APIService {
       }`;
     const response = (await API.graphql(graphqlOperation(statement))) as any;
     return <GetSpecialitiesQuery>response.data.getSpecialities;
+  }
+  async CountAppointments(
+    doctor_id: string,
+    is_complete?: boolean
+  ): Promise<CountAppointmentsQuery> {
+    const statement = `query CountAppointments($doctor_id: ID!, $is_complete: Boolean) {
+        countAppointments(doctor_id: $doctor_id, is_complete: $is_complete) {
+          __typename
+          booking_count
+          complete_count
+          day
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      doctor_id
+    };
+    if (is_complete) {
+      gqlAPIServiceArguments.is_complete = is_complete;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CountAppointmentsQuery>response.data.countAppointments;
+  }
+  async CountAppointmentsByMonths(
+    doctor_id: string,
+    is_online?: boolean
+  ): Promise<CountAppointmentsByMonthsQuery> {
+    const statement = `query CountAppointmentsByMonths($doctor_id: ID!, $is_online: Boolean) {
+        countAppointmentsByMonths(doctor_id: $doctor_id, is_online: $is_online) {
+          __typename
+          booking_count
+          complete_count
+          day
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      doctor_id
+    };
+    if (is_online) {
+      gqlAPIServiceArguments.is_online = is_online;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CountAppointmentsByMonthsQuery>(
+      response.data.countAppointmentsByMonths
+    );
+  }
+  async CountAppointmentsByYear(
+    doctor_id: string,
+    is_online?: boolean
+  ): Promise<CountAppointmentsByYearQuery> {
+    const statement = `query CountAppointmentsByYear($doctor_id: ID!, $is_online: Boolean) {
+        countAppointmentsByYear(doctor_id: $doctor_id, is_online: $is_online) {
+          __typename
+          booking_count
+          complete_count
+          day
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      doctor_id
+    };
+    if (is_online) {
+      gqlAPIServiceArguments.is_online = is_online;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <CountAppointmentsByYearQuery>response.data.countAppointmentsByYear;
   }
   AppointmentsChangedSubListener(
     doctor_id:string
@@ -471,5 +519,72 @@ export class APIService {
       }`, {doctor_id:doctor_id}
     )
   ) as Observable<AppointmentsChangedSubSubscription>;
+    }
+
+    async GetDoctorById(doctor_id: string): Promise<GetDoctorByIdQuery> {
+      const statement = `query GetDoctorById($doctor_id: String!) {
+          getDoctorById(doctor_id: $doctor_id) {
+            __typename
+            rating
+            charge
+            _id
+            rating_count
+            is_active
+            speciality
+            email_verified
+            name
+            phone_number_verified
+            phone_number
+            email
+            views
+            image
+            location
+            reg_council
+            reg_no
+            reg_year
+            degree
+            schedule{
+              sun{
+                morning
+                evening
+              }
+              mon{
+                morning
+                evening
+              }
+              tue{
+                morning
+                evening
+              }
+              thu{
+                morning
+                evening
+              }
+              wed{
+                morning
+                evening
+              }
+              thu{
+                morning
+                evening
+              }
+              fri{
+                morning
+                evening
+              }
+              sat{
+                morning
+                evening
+              }
+            }
+          }
+        }`;
+      const gqlAPIServiceArguments: any = {
+        doctor_id
+      };
+      const response = (await API.graphql(
+        graphqlOperation(statement, gqlAPIServiceArguments)
+      )) as any;
+      return <GetDoctorByIdQuery>response.data.getDoctorById;
     }
 }

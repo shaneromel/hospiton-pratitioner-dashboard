@@ -8,6 +8,7 @@ import {
   NbIconModule,
   NbSelectModule,
   NbListModule,
+  NbSpinnerModule,
 } from '@nebular/theme';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
@@ -71,6 +72,7 @@ import { EarningLiveUpdateChartComponent } from './earning-card/front-side/earni
     NgxEchartsModule,
     NgxChartsModule,
     LeafletModule,
+    NbSpinnerModule
   ],
   declarations: [
     ECommerceComponent,

@@ -49,14 +49,9 @@ export class ScheduleComponent implements OnInit {
     Auth.currentAuthenticatedUser({bypassCache:true}).then(data=>{
       this.apiService.GetDoctorById(data.username).then(doctor=>{
         this.doctor=doctor;
-        if(this.doctor.schedule){
-          this.days.forEach(a=>{
-            if(this.doctor.schedule[a]){
-              this.availableDays.push(a);
-            }
-          })
-        }
+        console.log(this.doctor);
       }).catch(err=>{
+        console.log(err);
         this.toastrService.showToast("danger","Error", err.message);
       })
     }).catch(err=>{
@@ -67,21 +62,31 @@ export class ScheduleComponent implements OnInit {
   selectDay(day){
     if(this.selectedDay!=day){
       this.selectedDay=day;
-      const schedule=this.doctor.schedule[day];
-      console.log(schedule)
-      if(schedule[0] && schedule[1]){
-        this.start1=this.convertMinutes(schedule[0]);
-        this.end1=this.convertMinutes(schedule[1]);
-        this.morning=true;
-      }else{
-        this.morning=false;
-      }
+      if(this.doctor.schedule[day]){
+        const schedule=this.doctor.schedule[day];
+        console.log(schedule);
 
-      if(schedule[2] && schedule[3]){
-        this.start2=this.convertMinutes(schedule[2]);
-        this.end2=this.convertMinutes(schedule[3]);
-        this.evening=true;
+        if(schedule.morning){
+          this.start1=this.convertMinutes(schedule.morning[0]);
+          this.end1=this.convertMinutes(schedule.morning[1]);
+          this.morning=true;
+        }else{
+          this.morning=false;
+        }
+  
+        if(schedule.evening){
+          this.start2=this.convertMinutes(schedule.evening[0]);
+          this.end2=this.convertMinutes(schedule.evening[1]);
+          this.evening=true;
+        }else{
+          this.evening=false;
+        }
       }else{
+        this.start1=null;
+        this.start2=null;
+        this.end1=null;
+        this.end2=null;
+        this.morning=false;
         this.evening=false;
       }
       
@@ -100,6 +105,10 @@ export class ScheduleComponent implements OnInit {
     }
   }
 
+  convertToMinutes(time){
+    return time.hour*60+time.minute;
+  }
+
   toggle(day, event){
     console.log(event, day);
     if(event){
@@ -110,7 +119,26 @@ export class ScheduleComponent implements OnInit {
   }
 
   setSchedule(){
-    console.log(this.start1);
+    if(this.morning && this.evening){
+      this.doctor.schedule[this.selectedDay]={
+        morning:this.start1 && this.end1 ? [this.convertToMinutes(this.start1), this.convertToMinutes(this.end1)] : null,
+        evening:this.start2 && this.end2 ? [this.convertToMinutes(this.start2), this.convertToMinutes(this.end2)] : null
+      };
+    }else if(this.morning){
+      this.doctor.schedule[this.selectedDay]={morning:[this.convertToMinutes(this.start1), this.convertToMinutes(this.end1)]};
+    }else if(this.evening){
+      this.doctor.schedule[this.selectedDay]={evening:[this.convertToMinutes(this.start2), this.convertToMinutes(this.end2)]};
+    }else{
+      this.doctor.schedule[this.selectedDay]=null;
+    }
+    
+    this.apiService.UpdateDoctor(JSON.stringify(this.doctor)).then(()=>{
+      this.toastrService.showToast("success", "Success", "Schedule successfully updated");
+    }).catch(err=>{
+      this.toastrService.showToast("danger", "Error", err.message);
+    })
   }
+
+
 
 }

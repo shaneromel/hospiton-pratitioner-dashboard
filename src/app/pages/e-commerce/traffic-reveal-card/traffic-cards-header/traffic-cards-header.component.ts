@@ -9,7 +9,7 @@ import { takeWhile } from 'rxjs/operators';
 })
 export class TrafficCardsHeaderComponent implements OnDestroy {
   private alive = true;
-
+  @Output() typeChange=new EventEmitter<string>();
   @Output() periodChange = new EventEmitter<string>();
 
   @Input() type: string = 'week';
@@ -28,6 +28,10 @@ export class TrafficCardsHeaderComponent implements OnDestroy {
   changePeriod(period: string): void {
     this.type = period;
     this.periodChange.emit(period);
+  }
+
+  changeType(event){
+    this.typeChange.emit(event);
   }
 
   ngOnDestroy() {

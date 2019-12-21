@@ -1,18 +1,18 @@
 <nb-card>
   <nb-card-header>Schedule</nb-card-header>
   <nb-card-body>
-    <div class="container">
+    <!-- <div class="container">
       <h3>Available days: </h3>
       <hr>
       <nb-checkbox *ngFor="let d of days" [checked]="availableDays?.includes(d) ? true : false" (checkedChange)="toggle(d, $event)">{{d}}</nb-checkbox>
-    </div>
+    </div> -->
     <div class="container">
       <h3>Schedule: </h3>
       <hr>
       <div class="row">
         <div class="col-md-4">
           <ul class="list-group">
-            <li (click)="selectDay(d)" *ngFor="let d of availableDays" class="list-group-item {{selectedDay===d ? 'active' : ''}}">{{d}}</li>
+            <li (click)="selectDay(d)" *ngFor="let d of days" class="list-group-item {{selectedDay===d ? 'active' : ''}}">{{d}}</li>
           </ul>
         </div>
         <div *ngIf="selectedDay" class="col-md-8">
@@ -49,12 +49,12 @@
             </div>
           </ng-container>
 
-          <button nbButton *ngIf="morning || evening" (click)="setSchedule()" status="success">Set time</button>
+          <button nbButton (click)="setSchedule()" status="success">Set time</button>
+
         </div>
       </div>
     </div>
   </nb-card-body>
   <nb-card-footer>
-    
   </nb-card-footer>
 </nb-card>
