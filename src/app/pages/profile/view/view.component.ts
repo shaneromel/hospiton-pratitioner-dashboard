@@ -60,6 +60,8 @@ export class ViewComponent implements OnInit {
   regYear:number;
   appointmentType:string;
   slotDuration:number;
+  morningLimit:number;
+  eveningLimit:number;
 
   constructor(private apiService:APIService, private toastrService:ToastrService) { 
     this.image="https://cdn.pixabay.com/photo/2015/03/04/22/35/head-659652_960_720.png";
@@ -68,7 +70,7 @@ export class ViewComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    console.log((new Date(1576886400000)).setHours(0,0,0))
     this.apiService.GetSpecialities().then(specialities=>{
       this.specialities=specialities;
     })
@@ -88,6 +90,8 @@ export class ViewComponent implements OnInit {
         this.council=doctor.reg_council;
         this.appointmentType=doctor.appointment_type;
         this.slotDuration=doctor.slot_duration;
+        this.morningLimit=doctor.morning_limit;
+        this.eveningLimit=doctor.evening_limit;
         if(doctor.image){
           Storage.get(doctor.image).then(url=>{
             this.image=url as string;
@@ -143,6 +147,8 @@ export class ViewComponent implements OnInit {
     this.doctor.reg_no=this.regNumber;
     this.doctor.reg_year=this.regYear;
     this.doctor.appointment_type=this.appointmentType;
+    this.doctor.morning_limit=this.morningLimit;
+    this.doctor.evening_limit=this.eveningLimit;
     if(this.appointmentType==="SLOT" && this.slotDuration){
       this.doctor.slot_duration=this.slotDuration;
     }else{

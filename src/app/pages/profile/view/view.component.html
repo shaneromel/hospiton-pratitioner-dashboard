@@ -57,8 +57,16 @@
               </nb-select>
             </div>
             <div *ngIf="appointmentType === 'SLOT'" class="form-group col-md-6">
-              <label class="label">Slot duration: </label>
+              <label class="label">Slot duration (minutes): </label>
               <input nbInput fullWidth name="slot-duration" type="number" placeholder="Slot duration" [(ngModel)]="slotDuration">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="label">Morning limit: </label>
+              <input nbInput fullWidth name="morning-limit" [(ngModel)]="morningLimit" placeholder="Morning limit" type="number">
+            </div>
+            <div class="form-group col-md-6">
+              <label class="label">Evening limit: </label>
+              <input nbInput fullWidth name="evening-limit" [(ngModel)]="eveningLimit" placeholder="Evening limit" type="number">
             </div>
           </div>
           <button nbButton status="success">Save</button>

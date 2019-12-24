@@ -1,0 +1,18 @@
+<nb-card [nbSpinner]="loading" nbSpinnerStatus="primary">
+  <nb-card-header>Manage slot appointments</nb-card-header>
+  <nb-card-body>
+    <div style="margin-bottom: 10px;" class="container-fluid">
+      <div class="row">
+        <div class="form-group col-md-3">
+          <label class="label">Show: </label>
+          <select [(ngModel)]="tfilter" class="form-control" (ngModelChange)="timeFilter($event)" name="time-filter">
+            <option value="1">Today's appointments</option>
+            <option value="2">All time</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)">
+    </ng2-smart-table>
+  </nb-card-body>
+</nb-card>

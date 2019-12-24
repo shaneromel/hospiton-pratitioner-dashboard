@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { ManageComponent } from './manage/manage.component';
 import { BookOfflineComponent } from './book-offline/book-offline.component';
+import { ManageSlotAppointmentsComponent } from './manage-slot-appointments/manage-slot-appointments.component';
 
 const routes: Routes = [
   {
@@ -12,6 +13,9 @@ const routes: Routes = [
   },
   {
     path:"book-offline", component:BookOfflineComponent
+  },
+  {
+    path:"manage-slot-appointments", component:ManageSlotAppointmentsComponent
   }
 ];
 

@@ -16,5 +16,10 @@ subscription AppointmentsChangedSub($doctor_id: String!) {
     user_name
     age
     phone
+    booking_type
+    slot {
+      start
+      end
+    }
   }
 }

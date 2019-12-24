@@ -28,8 +28,10 @@ export class TrafficBackCardComponent implements OnDestroy {
 
   ngOnChanges(){
     if(this.appointmentData){
-      this.data=this.appointmentData.map(a=>a.count);
+      this.data=this.appointmentData.map(a=>a.booking_count + a.complete_count);
       this.labels=this.appointmentData.map(a=>a.day);
+
+      console.log(this.appointmentData);
     }
 
   }

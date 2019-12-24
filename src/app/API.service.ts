@@ -42,6 +42,12 @@ export type AppointmentsChangedMutation = {
   user_name: string | null;
   age: number | null;
   phone: string | null;
+  booking_type: string | null;
+  slot: {
+    __typename: "AppointmentSlot";
+    start: number | null;
+    end: number | null;
+  } | null;
 };
 
 export type CancelAppointmentMutation = {
@@ -86,6 +92,12 @@ export type GetAppointmentsByDoctorQuery = {
   user_name: string | null;
   age: number | null;
   phone: string | null;
+  booking_type: string | null;
+  slot: {
+    __typename: "AppointmentSlot";
+    start: number | null;
+    end: number | null;
+  } | null;
 };
 
 export type GetDoctorByIdQuery = {
@@ -110,6 +122,9 @@ export type GetDoctorByIdQuery = {
   degree: string | null;
   appointment_type: string | null;
   slot_duration: number | null;
+  morning_limit: number | null;
+  evening_limit: number | null;
+  hospital_id: string | null;
 };
 
 export type GetSpecialitiesQuery = {
@@ -146,6 +161,52 @@ export type GetPractitionerQuery = {
   phone_number_verified: string;
   phone_number: string;
   email: string;
+  name: string | null;
+  type: string | null;
+};
+
+export type GetHospitalByIdQuery = {
+  __typename: "Hospital";
+  _id: string;
+  amenities: Array<string | null> | null;
+  awards: Array<string | null> | null;
+  beds: number | null;
+  description: string | null;
+  established_on: number | null;
+  gallery: Array<string | null> | null;
+  is_active: boolean | null;
+  location: string | null;
+  specialities: Array<string | null> | null;
+  type: string | null;
+  image: string | null;
+  rating: number | null;
+  rating_count: number | null;
+  email: string | null;
+  phone: string | null;
+  schedule: {
+    __typename: "HospitalSchedule";
+    sun: Array<number | null> | null;
+    mon: Array<number | null> | null;
+    tue: Array<number | null> | null;
+    wed: Array<number | null> | null;
+    thu: Array<number | null> | null;
+    fri: Array<number | null> | null;
+    sat: Array<number | null> | null;
+  } | null;
+};
+
+export type GetCognitoAttributesByIdQuery = {
+  __typename: "CognitoUser";
+  Username: string;
+  Attributes: Array<{
+    __typename: "CogntoAttr";
+    Name: string;
+    Value: string;
+  } | null> | null;
+  UserCreateDate: string | null;
+  UserLastModifiedDate: string | null;
+  Enabled: boolean | null;
+  UserStatus: string | null;
 };
 
 export type AppointmentsChangedSubSubscription = {
@@ -165,6 +226,12 @@ export type AppointmentsChangedSubSubscription = {
   user_name: string | null;
   age: number | null;
   phone: string | null;
+  booking_type: string | null;
+  slot: {
+    __typename: "AppointmentSlot";
+    start: number | null;
+    end: number | null;
+  } | null;
 };
 
 @Injectable({
@@ -268,6 +335,12 @@ export class APIService {
           user_name
           age
           phone
+          booking_type
+          slot {
+            __typename
+            start
+            end
+          }
         }
       }`;
     const gqlAPIServiceArguments: any = {
@@ -384,10 +457,11 @@ export class APIService {
   async GetAppointmentsByDoctor(
     doctor_id: string,
     start?: number,
-    end?: number
+    end?: number,
+    booking_type?: string
   ): Promise<GetAppointmentsByDoctorQuery> {
-    const statement = `query GetAppointmentsByDoctor($doctor_id: String!, $start: Float, $end: Float) {
-        getAppointmentsByDoctor(doctor_id: $doctor_id, start: $start, end: $end) {
+    const statement = `query GetAppointmentsByDoctor($doctor_id: String!, $start: Float, $end: Float, $booking_type: String) {
+        getAppointmentsByDoctor(doctor_id: $doctor_id, start: $start, end: $end, booking_type: $booking_type) {
           __typename
           appointment_type
           doctor_id
@@ -404,6 +478,12 @@ export class APIService {
           user_name
           age
           phone
+          booking_type
+          slot {
+            __typename
+            start
+            end
+          }
         }
       }`;
     const gqlAPIServiceArguments: any = {
@@ -414,6 +494,9 @@ export class APIService {
     }
     if (end) {
       gqlAPIServiceArguments.end = end;
+    }
+    if (booking_type) {
+      gqlAPIServiceArguments.booking_type = booking_type;
     }
     const response = (await API.graphql(
       graphqlOperation(statement, gqlAPIServiceArguments)
@@ -511,6 +594,8 @@ export class APIService {
           phone_number_verified
           phone_number
           email
+          name
+          type
         }
       }`;
     const gqlAPIServiceArguments: any = {
@@ -520,6 +605,76 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
     return <GetPractitionerQuery>response.data.getPractitioner;
+  }
+  async GetHospitalById(hospital_id: string): Promise<GetHospitalByIdQuery> {
+    const statement = `query GetHospitalById($hospital_id: ID!) {
+        getHospitalById(hospital_id: $hospital_id) {
+          __typename
+          _id
+          amenities
+          awards
+          beds
+          description
+          established_on
+          gallery
+          is_active
+          location
+          specialities
+          type
+          image
+          rating
+          rating_count
+          email
+          phone
+          schedule {
+            __typename
+            sun
+            mon
+            tue
+            wed
+            thu
+            fri
+            sat
+          }
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      hospital_id
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetHospitalByIdQuery>response.data.getHospitalById;
+  }
+  async GetCognitoAttributesById(
+    id: string,
+    type: string
+  ): Promise<GetCognitoAttributesByIdQuery> {
+    const statement = `query GetCognitoAttributesById($id: ID!, $type: String!) {
+        getCognitoAttributesById(id: $id, type: $type) {
+          __typename
+          Username
+          Attributes {
+            __typename
+            Name
+            Value
+          }
+          UserCreateDate
+          UserLastModifiedDate
+          Enabled
+          UserStatus
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      id,
+      type
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetCognitoAttributesByIdQuery>(
+      response.data.getCognitoAttributesById
+    );
   }
   AppointmentsChangedSubListener(
     doctor_id:string
@@ -545,6 +700,12 @@ export class APIService {
           user_name
           age
           phone
+          booking_type
+          slot {
+            __typename
+            start
+            end
+          }
         }
       }`, {doctor_id:doctor_id}
     )
@@ -609,6 +770,9 @@ export class APIService {
             }
             appointment_type
             slot_duration
+            morning_limit
+            evening_limit
+            hospital_id
           }
         }`;
       const gqlAPIServiceArguments: any = {

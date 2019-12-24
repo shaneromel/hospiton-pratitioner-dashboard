@@ -56,5 +56,19 @@
     </div>
   </nb-card-body>
   <nb-card-footer>
+    <button nbButton (click)="previewSchedule()" status="warning">Preview Schedule</button>
   </nb-card-footer>
 </nb-card>
+
+<ng-template #previewScheduleDialog>
+  <nb-card>
+    <nb-card-header>Schedule preview</nb-card-header>
+    <nb-card-body>
+      <ng2-smart-table [settings]="settings" [source]="schedulePreviewSource" (deleteConfirm)="onDeleteConfirm($event)">
+      </ng2-smart-table>
+    </nb-card-body>
+    <nb-card-footer>
+      <button nbButton status="danger" (click)="previewScheduleDialogRef.close()" style="float: right;">Close</button>
+    </nb-card-footer>
+  </nb-card>
+</ng-template>

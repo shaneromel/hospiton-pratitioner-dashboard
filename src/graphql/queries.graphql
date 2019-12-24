@@ -1,6 +1,16 @@
 # this is an auto generated file. This will be overwritten
-query GetAppointmentsByDoctor($doctor_id: String!, $start: Float, $end: Float) {
-  getAppointmentsByDoctor(doctor_id: $doctor_id, start: $start, end: $end) {
+query GetAppointmentsByDoctor(
+  $doctor_id: String!
+  $start: Float
+  $end: Float
+  $booking_type: String
+) {
+  getAppointmentsByDoctor(
+    doctor_id: $doctor_id
+    start: $start
+    end: $end
+    booking_type: $booking_type
+  ) {
     appointment_type
     doctor_id
     hospital_id
@@ -16,6 +26,11 @@ query GetAppointmentsByDoctor($doctor_id: String!, $start: Float, $end: Float) {
     user_name
     age
     phone
+    booking_type
+    slot {
+      start
+      end
+    }
   }
 }
 query GetDoctorById($doctor_id: String!) {
@@ -40,6 +55,9 @@ query GetDoctorById($doctor_id: String!) {
     degree
     appointment_type
     slot_duration
+    morning_limit
+    evening_limit
+    hospital_id
   }
 }
 query GetSpecialities {
@@ -76,5 +94,49 @@ query GetPractitioner($phone: String!) {
     phone_number_verified
     phone_number
     email
+    name
+    type
+  }
+}
+query GetHospitalById($hospital_id: ID!) {
+  getHospitalById(hospital_id: $hospital_id) {
+    _id
+    amenities
+    awards
+    beds
+    description
+    established_on
+    gallery
+    is_active
+    location
+    specialities
+    type
+    image
+    rating
+    rating_count
+    email
+    phone
+    schedule {
+      sun
+      mon
+      tue
+      wed
+      thu
+      fri
+      sat
+    }
+  }
+}
+query GetCognitoAttributesById($id: ID!, $type: String!) {
+  getCognitoAttributesById(id: $id, type: $type) {
+    Username
+    Attributes {
+      Name
+      Value
+    }
+    UserCreateDate
+    UserLastModifiedDate
+    Enabled
+    UserStatus
   }
 }

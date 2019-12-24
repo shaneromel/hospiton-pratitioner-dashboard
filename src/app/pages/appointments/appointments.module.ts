@@ -12,9 +12,10 @@ import { BookOfflineComponent } from './book-offline/book-offline.component';
 import { AdditionalDetailsComponent } from './components/additional-details/additional-details.component';
 import { PatientNameComponent } from './components/patient-name/patient-name.component';
 import { NbIconModule } from '@nebular/theme';
+import { ManageSlotAppointmentsComponent } from './manage-slot-appointments/manage-slot-appointments.component';
 
 @NgModule({
-  declarations: [ManageComponent, ConfirmBtnComponent, CancelBtnComponent, CompleteBtnComponent, BookOfflineComponent, AdditionalDetailsComponent, PatientNameComponent],
+  declarations: [ManageComponent, ConfirmBtnComponent, CancelBtnComponent, CompleteBtnComponent, BookOfflineComponent, AdditionalDetailsComponent, PatientNameComponent, ManageSlotAppointmentsComponent],
   imports: [
     CommonModule,
     AppointmentsRoutingModule,

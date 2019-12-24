@@ -52,6 +52,11 @@ mutation AppointmentsChanged($appointment_id: String!) {
     user_name
     age
     phone
+    booking_type
+    slot {
+      start
+      end
+    }
   }
 }
 mutation CancelAppointment($appointment_id: String!) {

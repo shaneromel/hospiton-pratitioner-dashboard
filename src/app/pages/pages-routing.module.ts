@@ -14,10 +14,10 @@ const routes: Routes = [{
       path: 'dashboard',
       component: ECommerceComponent,
     },
-    {
-      path: 'iot-dashboard',
-      component: DashboardComponent,
-    },
+    // {
+    //   path: 'iot-dashboard',
+    //   component: DashboardComponent,
+    // },
     // {
     //   path: 'layout',
     //   loadChildren: () => import('./layout/layout.module')
@@ -78,7 +78,7 @@ const routes: Routes = [{
     },
     {
       path: '',
-      redirectTo: 'appointments',
+      redirectTo: 'dashboard',
       pathMatch: 'full',
     },
     {

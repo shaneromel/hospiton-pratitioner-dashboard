@@ -12,11 +12,11 @@ import { CommunicationService } from '../../../services/communication.service';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'ngx-manage',
-  templateUrl: './manage.component.html',
-  styleUrls: ['./manage.component.scss']
+  selector: 'ngx-manage-slot-appointments',
+  templateUrl: './manage-slot-appointments.component.html',
+  styleUrls: ['./manage-slot-appointments.component.scss']
 })
-export class ManageComponent implements OnInit {
+export class ManageSlotAppointmentsComponent implements OnInit {
 
   settings = {
     add: {
@@ -36,9 +36,8 @@ export class ManageComponent implements OnInit {
     columns: {
       user_name: {
         title: 'Patient name',
-        type: 'custom',
-        renderComponent:PatientNameComponent,
-        width:"300px"
+        type: 'string',
+        width:"200px"
       },
       // age:{
       //   title:"Age",
@@ -51,9 +50,10 @@ export class ManageComponent implements OnInit {
         title:"Phone number",
         type:"html",
         valuePrepareFunction:(cell, row)=>{
+          
           return cell ? cell : "NA";
         },
-        width:"200px"
+        width:"100px"
       },
       // type: {
       //   title: 'Speciality',
@@ -68,6 +68,17 @@ export class ManageComponent implements OnInit {
         },
         sort:true,
         sortDirection:'desc',
+        filter:false,
+        width:"100px"
+      },
+      slot:{
+        title:"Slot",
+        type:"html",
+        valuePrepareFunction:(cell, row)=>{
+          const start=new Date(cell.start);
+          const end=new Date(cell.end);
+          return `${start.getHours()}:${start.getMinutes().toString().padStart(2, '0')}:${start.getSeconds().toString().padStart(2, '0')} - ${end.getHours().toString().padStart(2, '0')}:${end.getMinutes().toString().padStart(2, '0')}:${end.getSeconds().toString().padStart(2, '0')}`;
+        },
         filter:false
       },
       // preferred_timestamp: {
@@ -210,10 +221,10 @@ export class ManageComponent implements OnInit {
       this.user=user;
 
       this.apiService.GetDoctorById(user.username).then(doctor=>{
-        if(doctor.appointment_type==="SLOT"){
-          this.router.navigate(['/pages/appointments/manage-slot-appointments']);
+        if(doctor.appointment_type==="QUEUE"){
+          this.router.navigate(['/pages/appointments/manage']);
         }else{
-          this.apiService.GetAppointmentsByDoctor(user.username, this.start, this.end, "QUEUE").then(data=>{
+          this.apiService.GetAppointmentsByDoctor(user.username, this.start, this.end, "SLOT").then(data=>{
             this.source.load(data as any);
           }).catch(err=>{
             this.toastrService.showToast("danger", "Error", err.message);
@@ -225,6 +236,7 @@ export class ManageComponent implements OnInit {
               if(data.filter(a=>a._id===appointment._id).length>0){
                 this.source.update(data.filter(a=>a._id===appointment._id)[0], appointment).then(()=>{
                 }).catch(err=>{
+                  console.log(err);
                   this.toastrService.showToast("danger", "Error", err.message);
                 })
               }else{
@@ -246,14 +258,14 @@ export class ManageComponent implements OnInit {
   timeFilter(event){
     switch(event){
       case "1":
-        this.apiService.GetAppointmentsByDoctor(this.user.username, this.start, this.end, "QUEUE").then(data=>{
+        this.apiService.GetAppointmentsByDoctor(this.user.username, this.start, this.end, "SLOT").then(data=>{
           this.source.load(data as any);
         }).catch(err=>{
           this.toastrService.showToast("danger", "Error", err.message);
         });
         break;
       case "2":
-        this.apiService.GetAppointmentsByDoctor(this.user.username, null, null, "QUEUE").then(data=>{
+        this.apiService.GetAppointmentsByDoctor(this.user.username, null, null, "SLOT").then(data=>{
           this.source.load(data as any);
         }).catch(err=>{
           this.toastrService.showToast("danger", "Error", err.message);
