@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { Storage, Auth } from 'aws-amplify';
 import { APIService } from '../../../API.service';
 import { ToastrService } from '../../../services/toastr.service';
 import { LocalDataSource } from 'ng2-smart-table';
+import { NbDialogService } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-view',
@@ -10,6 +11,10 @@ import { LocalDataSource } from 'ng2-smart-table';
   styleUrls: ['./view.component.scss']
 })
 export class ViewComponent implements OnInit {
+  @ViewChild("submitVcDialog", {static:false}) submitVcDialog;
+  
+  submitVcDialogRef;
+
   image:string;
   imageFile;
   doctor:any;
@@ -19,6 +24,8 @@ export class ViewComponent implements OnInit {
   isActive:boolean;
   email:string;
   phone:string;
+
+  verificationCode:string;
 
   loading:boolean;
   locationLoader:boolean;
@@ -37,6 +44,8 @@ export class ViewComponent implements OnInit {
         valuePrepareFunction:(cell, row)=>{
           if(row.key === "Status"){
             return `<strong class="text-${cell === 'ACTIVE' ? 'success' : 'danger'}">${cell}</strong>`
+          }else if(row.key === "Email verified"){
+            return `<strong class="text-${cell === 'YES' ? 'success' : 'danger'}">${cell}</strong>`;
           }else{
             return cell;
           }
@@ -63,21 +72,19 @@ export class ViewComponent implements OnInit {
   morningLimit:number;
   eveningLimit:number;
 
-  constructor(private apiService:APIService, private toastrService:ToastrService) { 
+  constructor(private apiService:APIService, private toastrService:ToastrService, private dialogService:NbDialogService) { 
     this.image="https://cdn.pixabay.com/photo/2015/03/04/22/35/head-659652_960_720.png";
     this.loading=false;
     this.locationLoader=false;
   }
 
   ngOnInit() {
-    console.log((new Date(1576886400000)).setHours(0,0,0))
     this.apiService.GetSpecialities().then(specialities=>{
       this.specialities=specialities;
     })
 
     Auth.currentAuthenticatedUser({bypassCache:true}).then(data=>{
       this.apiService.GetDoctorById(data.attributes.sub).then(doctor=>{
-        console.log(doctor)
         this.doctor=doctor;
         this.speciality=doctor.speciality;
         this.name=doctor.name;
@@ -105,28 +112,56 @@ export class ViewComponent implements OnInit {
           this.lng=doctor.location[0];
         }
 
-
-        this.source.load([
-          {
-            key:"Average rating",
-            value:doctor.rating
-          },
-          {
-            key:"Rating count",
-            value:doctor.rating_count
-          },
-          {
-            key:"Profile visits",
-            value:doctor.views
-          },
-          {
-            key:"Status",
-            value:doctor.is_active ? "ACTIVE" : "INACTIVE"
-          },
-        ])
+        this.loadOtherDetails();
 
       })
     })
+  }
+
+  loadOtherDetails(){
+    this.source.load([
+      {
+        key:"Average rating",
+        value:this.doctor.rating
+      },
+      {
+        key:"Rating count",
+        value:this.doctor.rating_count
+      },
+      {
+        key:"Profile visits",
+        value:this.doctor.views
+      },
+      {
+        key:"Status",
+        value:this.doctor.is_active ? "ACTIVE" : "INACTIVE"
+      },
+      {
+        key:"Email verified",
+        value:this.doctor.email_verified ? "YES" : "NO"
+      }
+    ])
+  }
+
+  sendVerificationCode(){
+    Auth.verifyCurrentUserAttribute("email").then(()=>{
+      this.toastrService.showToast("success", "Success", "A verification code is sent to the registered email address");
+      this.submitVcDialogRef=this.dialogService.open(this.submitVcDialog);
+    }).catch(err=>{
+      this.toastrService.showToast("danger", "Error", err.message);
+    });
+  }
+  
+  submitVerificationCode(){
+    Auth.verifyCurrentUserAttributeSubmit("email", this.verificationCode)
+    .then(() => {
+        this.toastrService.showToast("success", "Success", "Email successfully verfied");
+        this.doctor.email_verified=true;
+        this.loadOtherDetails();
+        this.submitVcDialogRef.close();
+    }).catch(e => {
+        this.toastrService.showToast("danger", "Error", e.message);
+    });
   }
 
   updateDoctor(){
@@ -163,10 +198,9 @@ export class ViewComponent implements OnInit {
       }).then(result=>{
 
         this.doctor.image=(result as any).key;
-
-        if(this.name!=this.doctor.name || this.phone!=this.doctor.phone_number){
+        if(this.name!=this.doctor.name || this.phone!=this.doctor.phone_number || this.email!=this.doctor.email){
           Auth.currentAuthenticatedUser({bypassCache:true}).then(cognitoUser=>{
-            Auth.updateUserAttributes(cognitoUser, {name:this.name, phone_number:this.phone}).then(()=>{
+            Auth.updateUserAttributes(cognitoUser, {name:this.name, phone_number:this.phone, email:this.email}).then(()=>{
               this.apiService.UpdateDoctor(JSON.stringify(this.doctor)).then(()=>{
                 this.loading=false;
                 this.toastrService.showToast("success", "Success", "Details successfully updated")
@@ -193,11 +227,10 @@ export class ViewComponent implements OnInit {
         }
 
       })
-    }else{
-
-      if(this.name!=this.doctor.name || this.phone!=this.doctor.phone_number){
+    }else{  
+      if(this.name!=this.doctor.name || this.phone!=this.doctor.phone_number || this.email!=this.doctor.email){
         Auth.currentAuthenticatedUser({bypassCache:true}).then(cognitoUser=>{
-          Auth.updateUserAttributes(cognitoUser, {name:this.name, phone_number:this.phone}).then(()=>{
+          Auth.updateUserAttributes(cognitoUser, {name:this.name, phone_number:this.phone, email:this.email}).then(()=>{
             this.apiService.UpdateDoctor(JSON.stringify(this.doctor)).then(()=>{
               this.toastrService.showToast("success", "Success", "Details successfully updated")
               this.loading=false;
@@ -227,9 +260,7 @@ export class ViewComponent implements OnInit {
 
   imageSelected(event){
     this.imageFile=event.target.files[0];
-
     var reader=new FileReader();
-
     reader.readAsDataURL(this.imageFile);
 
     reader.onload=ev=>{

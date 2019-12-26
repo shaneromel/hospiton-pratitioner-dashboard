@@ -82,6 +82,9 @@
         <ng2-smart-table [settings]="settings" [source]="source">
         </ng2-smart-table>
       </nb-card-body>
+      <nb-card-footer *ngIf="!doctor?.email_verified">
+        <button nbButton status="warning" (click)="sendVerificationCode()" style="float: right;">Verify email</button>
+      </nb-card-footer>
     </nb-card>
   </div>
   <div class="col-md-12">
@@ -100,3 +103,17 @@
     </nb-card>
   </div>
 </div>
+
+<ng-template #submitVcDialog>
+  <nb-card>
+    <nb-card-header>Enter verification code</nb-card-header>
+    <nb-card-body>
+      <form (ngSubmit)="submitVerificationCode()">
+        <div class="form-group">
+          <input nbInput placeholder="Verification code" fullWidth name="vc" [(ngModel)]="verificationCode">
+        </div>
+        <button nbButton status="success">Submit</button>
+      </form>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
