@@ -7,6 +7,8 @@ import { NbMenuModule, NbLayoutModule, NbCardModule, NbInputModule, NbButtonModu
 import { AuthComponent } from './auth.component';
 import { FormsModule } from '@angular/forms';
 import { RegisterComponent } from './register/register.component';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
+import { NbIconModule } from '@nebular/theme';
 
 @NgModule({
   declarations: [LoginComponent, AuthComponent, RegisterComponent],
@@ -21,7 +23,9 @@ import { RegisterComponent } from './register/register.component';
     NbButtonModule,
     FormsModule,
     NbDialogModule,
-    NbSelectModule
+    NbSelectModule,
+    NbEvaIconsModule,
+    NbIconModule
   ]
 })
 export class AuthModule { }

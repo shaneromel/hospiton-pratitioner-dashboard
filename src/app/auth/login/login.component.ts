@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Auth } from 'aws-amplify';
 import { Router } from '@angular/router';
 import { ToastrService } from '../../services/toastr.service';
@@ -13,6 +13,9 @@ export class LoginComponent implements OnInit {
   @ViewChild("otpDialog", {static:false}) otpDialog;
   @ViewChild("fpUsernameDialog", {static:false}) fpUsernameDialog; 
   @ViewChild("fpCodeDialog", {static:false}) fpCodeDialog;
+  @ViewChild("passwordInput", {static:false}) passwordInput:ElementRef;
+  @ViewChild("newPasswordInput", {static:false}) newPasswordInput:ElementRef;
+  @ViewChild("confirmNewPasswordInput", {static:false}) confirmNewPasswordInput:ElementRef;
 
   username:string;
   password:string;
@@ -28,7 +31,15 @@ export class LoginComponent implements OnInit {
   fpUsernameDialogRef;
   fpCodeDialogRef;
 
-  constructor(private router:Router, private toastrService:ToastrService, private dialogService:NbDialogService) { }
+  passwordShown:boolean;
+  newPasswordShown:boolean;
+  confirmNewPasswordShown:boolean;
+
+  constructor(private router:Router, private toastrService:ToastrService, private dialogService:NbDialogService) { 
+    this.passwordShown=false;
+    this.newPasswordShown=false;
+    this.confirmNewPasswordShown=false;
+  }
 
   ngOnInit() {
   }
@@ -43,6 +54,33 @@ export class LoginComponent implements OnInit {
     }).catch(err=>{
       this.toastrService.showToast("danger", "Error", err.message);
     })
+  }
+
+  toggleShowNewPassword(){
+    if(this.newPasswordShown){
+      this.newPasswordInput.nativeElement.setAttribute('type', 'password');
+    }else{
+      this.newPasswordInput.nativeElement.setAttribute('type', 'text');
+    }
+    this.newPasswordShown=!this.newPasswordShown;
+  }
+
+  toggleShowConfirmNewPassword(){
+    if(this.confirmNewPasswordShown){
+      this.confirmNewPasswordInput.nativeElement.setAttribute('type', 'password');
+    }else{
+      this.confirmNewPasswordInput.nativeElement.setAttribute('type', 'text');
+    }
+    this.confirmNewPasswordShown=!this.confirmNewPasswordShown;
+  }
+
+  toggleShowPassword(){
+    if(this.passwordShown){
+      this.passwordInput.nativeElement.setAttribute('type', 'password');
+    }else{
+      this.passwordInput.nativeElement.setAttribute('type', 'text');
+    }
+    this.passwordShown=!this.passwordShown;
   }
 
   forgotPassword(){

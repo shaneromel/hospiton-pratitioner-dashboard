@@ -9,6 +9,8 @@ import { Ng2SmartTableModule } from 'ng2-smart-table';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 import { ScheduleComponent } from './schedule/schedule.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { NbEvaIconsModule } from '@nebular/eva-icons';
+import { NbIconModule } from '@nebular/theme';
 
 @NgModule({
   declarations: [ViewComponent, ChangePasswordComponent, ScheduleComponent],
@@ -28,7 +30,9 @@ import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
     NbSelectModule,
     NgbModule,
     NbCheckboxModule,
-    NbDialogModule
+    NbDialogModule,
+    NbEvaIconsModule,
+    NbIconModule
   ]
 })
 export class ProfileModule { }

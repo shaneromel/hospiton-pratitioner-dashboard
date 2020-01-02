@@ -186,7 +186,7 @@ export class ViewComponent implements OnInit {
     this.doctor.evening_limit=this.eveningLimit;
     if(this.appointmentType==="SLOT" && this.slotDuration){
       this.doctor.slot_duration=this.slotDuration;
-    }else{
+    }else if(this.appointmentType==="SLOT"){
       this.toastrService.showToast("danger", "Error", "Slot duration has to be mentioned for appointment type slot");
       this.loading=false;
       return;

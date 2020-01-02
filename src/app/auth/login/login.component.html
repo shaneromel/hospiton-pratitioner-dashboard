@@ -10,7 +10,13 @@
           </div>
           <div class="form-group">
             <label class="label">Password: </label>
-            <input nbInput fullWidth [(ngModel)]="password" name="password" placeholder="Password" type="password"> 
+            <!-- <input #passwordInput nbInput fullWidth [(ngModel)]="password" name="password" placeholder="Password" type="password">  -->
+            <div class="input-group mb-3">
+              <input #passwordInput class="form-control" [(ngModel)]="password" name="password" placeholder="Password" type="password">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="toggleShowPassword()" type="button"><nb-icon [icon]="passwordShown ? 'eye-off-outline' : 'eye-outline'"></nb-icon></button>
+              </div>
+            </div>
           </div>
           <small (click)="forgotPassword()" style="cursor: pointer;" class="text-success">Forgot password?</small>
           <small style="float:right;"><a [routerLink]="['/auth/register']">Sign up here as a doctor</a></small>
@@ -48,11 +54,23 @@
           </div>
           <div class="form-group col-md-6">
             <label class="label">New password: </label>
-            <input nbInput fullWidth name="new" type="password" [(ngModel)]="new" placeholder="New password">
+            <!-- <input nbInput fullWidth name="new" #newPassword type="password" [(ngModel)]="new" placeholder="New password"> -->
+            <div class="input-group mb-3">
+              <input #newPasswordInput class="form-control" type="password" [(ngModel)]="new" placeholder="New password" name="new">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="toggleShowNewPassword()" type="button"><nb-icon [icon]="newPasswordShown ? 'eye-off-outline' : 'eye-outline'"></nb-icon></button>
+              </div>
+            </div>
           </div>
           <div class="form-group col-md-6">
             <label class="label">Confirm New password: </label>
-            <input nbInput fullWidth name="confirm-new" type="password" [(ngModel)]="confirmNew" placeholder="Confirm New password">
+            <!-- <input nbInput fullWidth name="confirm-new" type="password" [(ngModel)]="confirmNew" placeholder="Confirm New password"> -->
+            <div class="input-group mb-3">
+              <input #confirmNewPasswordInput class="form-control" name="confirm-new" type="password" [(ngModel)]="confirmNew" placeholder="Confirm New password">
+              <div class="input-group-append">
+                <button class="btn btn-outline-secondary" (click)="toggleShowConfirmNewPassword()" type="button"><nb-icon [icon]="confirmNewPasswordShown ? 'eye-off-outline' : 'eye-outline'"></nb-icon></button>
+              </div>
+            </div>
           </div>
         </div>
         <button nbButton status="success">Submit</button>

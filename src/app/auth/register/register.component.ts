@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Auth } from 'aws-amplify';
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { ToastrService } from '../../services/toastr.service';
@@ -13,6 +13,8 @@ import { APIService } from '../../API.service';
 })
 export class RegisterComponent implements OnInit {
   @ViewChild("otpDialog", {static:false}) otpDialog;
+  @ViewChild("passwordInput", {static:false}) passwordInput:ElementRef;
+  @ViewChild("confirmPasswordInput", {static:false}) confirmPasswordInput:ElementRef;
   
   otpDialogRef;
   
@@ -28,8 +30,13 @@ export class RegisterComponent implements OnInit {
 
   specialities:any
 
+  passwordShown:boolean;
+  confirmPasswordShown:boolean;
+
   constructor(private toastrService:ToastrService, private dialogService:NbDialogService, private router:Router, private apiService:APIService) { 
     this.speciality="1";
+    this.passwordShown=false;
+    this.confirmPasswordShown=false;
   }
 
   ngOnInit() {
@@ -66,6 +73,26 @@ export class RegisterComponent implements OnInit {
       }
     }else{
       this.toastrService.showToast("danger", "Error", "All fields are compulsory")
+    }
+
+  }
+
+  toggleShowPassword(){
+    this.passwordShown=!this.passwordShown;
+    if(this.passwordShown){
+      this.passwordInput.nativeElement.setAttribute('type', 'text');
+    }else{
+      this.passwordInput.nativeElement.setAttribute('type', 'password');
+    }
+  }
+
+  toggleShowConfirmPassword(){
+    this.confirmPasswordShown=!this.confirmPasswordShown;
+
+    if(this.confirmPasswordShown){
+      this.confirmPasswordInput.nativeElement.setAttribute('type', 'text');
+    }else{
+      this.confirmPasswordInput.nativeElement.setAttribute('type', 'password');
     }
 
   }

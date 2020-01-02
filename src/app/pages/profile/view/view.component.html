@@ -8,7 +8,7 @@
           <div class="col-md-6 offset-md-3">
             <img [src]="image" class="img-fluid">
             <button style="margin-top: 5px;" nbButton (click)="fileInput.click()">Choose image</button>
-            <input #fileInput style="display: none;" type="file" (change)="imageSelected($event)">
+            <input #fileInput accept="image/*" style="display: none;" type="file" (change)="imageSelected($event)">
           </div>
         </div>
       </div>
