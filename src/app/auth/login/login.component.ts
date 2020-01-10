@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { Auth } from 'aws-amplify';
 import { Router } from '@angular/router';
 import { ToastrService } from '../../services/toastr.service';
-import { NbDialogService } from '@nebular/theme';
+import { NbDialogService, NbDialogRef } from '@nebular/theme';
 
 @Component({
   selector: 'ngx-login',
@@ -16,6 +16,7 @@ export class LoginComponent implements OnInit {
   @ViewChild("passwordInput", {static:false}) passwordInput:ElementRef;
   @ViewChild("newPasswordInput", {static:false}) newPasswordInput:ElementRef;
   @ViewChild("confirmNewPasswordInput", {static:false}) confirmNewPasswordInput:ElementRef;
+  @ViewChild("userConfirmationDialog", {static:false}) userConfirmationDialog;
 
   username:string;
   password:string;
@@ -24,12 +25,14 @@ export class LoginComponent implements OnInit {
   code:string;
   new:string;
   confirmNew:string;
-  
+  confirmationCode:string;
+
   fpUsername:string;
 
-  otpDialogRef;
-  fpUsernameDialogRef;
-  fpCodeDialogRef;
+  otpDialogRef:NbDialogRef<any>;
+  fpUsernameDialogRef:NbDialogRef<any>;
+  fpCodeDialogRef:NbDialogRef<any>;
+  userConfirmationDialogRef:NbDialogRef<any>;
 
   passwordShown:boolean;
   newPasswordShown:boolean;
@@ -50,7 +53,37 @@ export class LoginComponent implements OnInit {
       password:this.password
     }).then((user)=>{
       this.user=user;
+      console.log(this.user)
       this.otpDialogRef=this.dialogService.open(this.otpDialog);
+    }).catch(err=>{
+      console.log(err);
+      
+      if(err.code==="UserNotConfirmedException"){
+        Auth.resendSignUp(this.username).then(()=>{
+          this.userConfirmationDialogRef=this.dialogService.open(this.userConfirmationDialog);
+        }).catch(err=>{
+          this.toastrService.showToast("danger", "Error", err.message);
+        })
+      }
+
+      this.toastrService.showToast("danger", "Error", err.message);
+    })
+  }
+
+  confirmUser(){
+    Auth.confirmSignUp(this.username, this.confirmationCode).then(()=>{
+      this.toastrService.showToast("success", "Confirmation successful", "Now you can login to your account.");
+      this.userConfirmationDialogRef.close();
+    }).catch(err=>{
+      this.toastrService.showToast("danger", "Error", err.message);
+    })
+  }
+
+  resendCode(){
+    Auth.resendSignUp(this.username).then(()=>{
+      this.toastrService.showToast("success", "Success", "Code resent successfully");
+      this.userConfirmationDialogRef.close();
+      this.userConfirmationDialogRef=this.dialogService.open(this.userConfirmationDialog);
     }).catch(err=>{
       this.toastrService.showToast("danger", "Error", err.message);
     })

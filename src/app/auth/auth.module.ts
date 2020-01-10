@@ -3,15 +3,16 @@ import { CommonModule } from '@angular/common';
 import { ThemeModule } from '../@theme/theme.module';
 import { AuthRoutingModule } from './auth-routing.module';
 import { LoginComponent } from './login/login.component';
-import { NbMenuModule, NbLayoutModule, NbCardModule, NbInputModule, NbButtonModule, NbDialogModule, NbSelectModule } from '@nebular/theme';
+import { NbMenuModule, NbLayoutModule, NbCardModule, NbInputModule, NbButtonModule, NbDialogModule, NbSelectModule, NbSpinnerModule } from '@nebular/theme';
 import { AuthComponent } from './auth.component';
 import { FormsModule } from '@angular/forms';
 import { RegisterComponent } from './register/register.component';
 import { NbEvaIconsModule } from '@nebular/eva-icons';
 import { NbIconModule } from '@nebular/theme';
+import { HospitalRegisterComponent } from './hospital-register/hospital-register.component';
 
 @NgModule({
-  declarations: [LoginComponent, AuthComponent, RegisterComponent],
+  declarations: [LoginComponent, AuthComponent, RegisterComponent, HospitalRegisterComponent],
   imports: [
     CommonModule,
     AuthRoutingModule,
@@ -25,7 +26,8 @@ import { NbIconModule } from '@nebular/theme';
     NbDialogModule,
     NbSelectModule,
     NbEvaIconsModule,
-    NbIconModule
+    NbIconModule,
+    NbSpinnerModule
   ]
 })
 export class AuthModule { }

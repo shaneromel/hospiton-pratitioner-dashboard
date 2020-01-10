@@ -59,7 +59,8 @@ export class RegisterComponent implements OnInit {
             attributes:{
               email:this.email,
               phone_number:formattedPhone,
-              name:this.name
+              name:this.name,
+              "custom:type":"DOCTOR"
             }
           }).then(data=>{
             this.user=data;
@@ -67,6 +68,8 @@ export class RegisterComponent implements OnInit {
           }).catch(err=>{
             this.toastrService.showToast("danger", "Error", err.message);
           })
+        }else{
+          this.toastrService.showToast("danger", "Error", "Passwords do not match");
         }
       }else{
         this.toastrService.showToast("danger", "Error", "Please enter a valid phone number")
@@ -100,14 +103,12 @@ export class RegisterComponent implements OnInit {
   confirmSignUp(){
     Auth.confirmSignUp(this.email, this.otp).then(data=>{
       this.otpDialogRef.close();
-      this.toastrService.showToast("success", "Sign up successful", "You will be redirected to the login page shortly");
-
       this.apiService.AddDoctor(this.user.userSub, this.speciality, this.charge).then(()=>{
-        this.router.navigate(['/auth/login']);
+        this.toastrService.showToast("success", "Sign up successful", "You will be redirected to the login page shortly");
+        this.router.navigate(['/auth/login']);      
       }).catch(err=>{
         this.toastrService.showToast("danger", "Error", err.message);
       })
-      
     }).catch(err=>{
       this.toastrService.showToast("danger", "Error", err.message);
     })

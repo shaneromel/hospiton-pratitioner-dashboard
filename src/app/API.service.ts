@@ -5,6 +5,37 @@ import API, { graphqlOperation } from "@aws-amplify/api";
 import { GraphQLResult } from "@aws-amplify/api/lib/types";
 import * as Observable from "zen-observable";
 
+export type HospitalInputType = {
+  _id: string;
+  amenities?: Array<string | null> | null;
+  awards?: Array<string | null> | null;
+  beds?: number | null;
+  description?: string | null;
+  established_on?: number | null;
+  gallery?: Array<string | null> | null;
+  is_active?: boolean | null;
+  location?: string | null;
+  specialities?: Array<string | null> | null;
+  type?: string | null;
+  image?: string | null;
+  rating?: number | null;
+  rating_count?: number | null;
+  email?: string | null;
+  phone?: string | null;
+  schedule?: HospitalScheduleInputType | null;
+  address?: string | null;
+};
+
+export type HospitalScheduleInputType = {
+  sun?: Array<number | null> | null;
+  mon?: Array<number | null> | null;
+  tue?: Array<number | null> | null;
+  wed?: Array<number | null> | null;
+  thu?: Array<number | null> | null;
+  fri?: Array<number | null> | null;
+  sat?: Array<number | null> | null;
+};
+
 export type ConfirmAppointmentMutation = {
   __typename: "Response";
   code: string;
@@ -71,6 +102,16 @@ export type AddDoctorMutation = {
 };
 
 export type RemoveDoctorLocationMutation = {
+  __typename: "Response";
+  code: string;
+};
+
+export type UpdateDoctor2Mutation = {
+  __typename: "Response";
+  code: string;
+};
+
+export type AddHospitalMutation = {
   __typename: "Response";
   code: string;
 };
@@ -193,6 +234,7 @@ export type GetHospitalByIdQuery = {
     fri: Array<number | null> | null;
     sat: Array<number | null> | null;
   } | null;
+  address: string | null;
 };
 
 export type GetCognitoAttributesByIdQuery = {
@@ -454,6 +496,37 @@ export class APIService {
     )) as any;
     return <RemoveDoctorLocationMutation>response.data.removeDoctorLocation;
   }
+  async UpdateDoctor2(data: string): Promise<UpdateDoctor2Mutation> {
+    const statement = `mutation UpdateDoctor2($data: String!) {
+        updateDoctor2(data: $data) {
+          __typename
+          code
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      data
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <UpdateDoctor2Mutation>response.data.updateDoctor2;
+  }
+  async AddHospital(data?: HospitalInputType): Promise<AddHospitalMutation> {
+    const statement = `mutation AddHospital($data: HospitalInputType) {
+        addHospital(data: $data) {
+          __typename
+          code
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {};
+    if (data) {
+      gqlAPIServiceArguments.data = data;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <AddHospitalMutation>response.data.addHospital;
+  }
   async GetAppointmentsByDoctor(
     doctor_id: string,
     start?: number,
@@ -636,6 +709,7 @@ export class APIService {
             fri
             sat
           }
+          address
         }
       }`;
     const gqlAPIServiceArguments: any = {
@@ -710,77 +784,77 @@ export class APIService {
       }`, {doctor_id:doctor_id}
     )
   ) as Observable<AppointmentsChangedSubSubscription>;
-    }
+  }
 
-    async GetDoctorById(doctor_id: string): Promise<GetDoctorByIdQuery> {
-      const statement = `query GetDoctorById($doctor_id: String!) {
-          getDoctorById(doctor_id: $doctor_id) {
-            __typename
-            rating
-            charge
-            _id
-            rating_count
-            is_active
-            speciality
-            email_verified
-            name
-            phone_number_verified
-            phone_number
-            email
-            views
-            image
-            location
-            reg_council
-            reg_no
-            reg_year
-            degree
-            schedule{
-              sun{
-                morning
-                evening
-              }
-              mon{
-                morning
-                evening
-              }
-              tue{
-                morning
-                evening
-              }
-              thu{
-                morning
-                evening
-              }
-              wed{
-                morning
-                evening
-              }
-              thu{
-                morning
-                evening
-              }
-              fri{
-                morning
-                evening
-              }
-              sat{
-                morning
-                evening
-              }
+  async GetDoctorById(doctor_id: string): Promise<GetDoctorByIdQuery> {
+    const statement = `query GetDoctorById($doctor_id: String!) {
+        getDoctorById(doctor_id: $doctor_id) {
+          __typename
+          rating
+          charge
+          _id
+          rating_count
+          is_active
+          speciality
+          email_verified
+          name
+          phone_number_verified
+          phone_number
+          email
+          views
+          image
+          location
+          reg_council
+          reg_no
+          reg_year
+          degree
+          schedule{
+            sun{
+              morning
+              evening
             }
-            appointment_type
-            slot_duration
-            morning_limit
-            evening_limit
-            hospital_id
+            mon{
+              morning
+              evening
+            }
+            tue{
+              morning
+              evening
+            }
+            thu{
+              morning
+              evening
+            }
+            wed{
+              morning
+              evening
+            }
+            thu{
+              morning
+              evening
+            }
+            fri{
+              morning
+              evening
+            }
+            sat{
+              morning
+              evening
+            }
           }
-        }`;
-      const gqlAPIServiceArguments: any = {
-        doctor_id
-      };
-      const response = (await API.graphql(
-        graphqlOperation(statement, gqlAPIServiceArguments)
-      )) as any;
-      return <GetDoctorByIdQuery>response.data.getDoctorById;
-    }
+          appointment_type
+          slot_duration
+          morning_limit
+          evening_limit
+          hospital_id
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      doctor_id
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetDoctorByIdQuery>response.data.getDoctorById;
+  }
 }

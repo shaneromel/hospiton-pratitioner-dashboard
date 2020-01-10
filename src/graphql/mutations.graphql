@@ -98,3 +98,13 @@ mutation RemoveDoctorLocation($doctor_id: ID!) {
     code
   }
 }
+mutation UpdateDoctor2($data: String!) {
+  updateDoctor2(data: $data) {
+    code
+  }
+}
+mutation AddHospital($data: HospitalInputType) {
+  addHospital(data: $data) {
+    code
+  }
+}

@@ -125,6 +125,7 @@ query GetHospitalById($hospital_id: ID!) {
       fri
       sat
     }
+    address
   }
 }
 query GetCognitoAttributesById($id: ID!, $type: String!) {

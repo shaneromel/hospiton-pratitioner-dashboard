@@ -27,6 +27,22 @@
   </nb-card-body>
 </nb-card>
 
+<ng-template #userConfirmationDialog>
+  <nb-card>
+    <nb-card-header>Enter confirmation code sent to your phone number: </nb-card-header>
+    <nb-card-body>
+      <form (ngSubmit)="confirmUser()">
+        <div class="form-group">
+          <label class="label">Code: </label>
+          <input nbInput fullWidth name="confirmation-code" [(ngModel)]="confirmationCode" placeholder="Confirmation code">
+        </div>
+        <button nbButton status="success">Submit</button>
+        <button (click)="resendCode()" type="button" style="margin-left: 5px;" nbButton status="warning">Resend code</button>
+      </form>
+    </nb-card-body>
+  </nb-card>
+</ng-template>
+
 <ng-template #fpUsernameDialog>
   <nb-card>
     <nb-card-header>Enter your email</nb-card-header>
