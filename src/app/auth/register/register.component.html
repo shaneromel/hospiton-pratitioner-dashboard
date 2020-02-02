@@ -1,4 +1,4 @@
-<nb-card>
+<nb-card nbSpinnerStatus="primary" [nbSpinner]="loading">
   <nb-card-header>Register as a doctor</nb-card-header>
   <nb-card-body>
     <div class="container">
@@ -60,7 +60,7 @@
 </nb-card>
 
 <ng-template #otpDialog>
-  <nb-card>
+  <nb-card nbSpinnerStatus="primary" [nbSpinner]="otpLoading">
     <nb-card-header>Enter OTP</nb-card-header>
     <nb-card-body>
       <form (ngSubmit)="confirmSignUp()">

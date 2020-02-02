@@ -33,10 +33,15 @@ export class RegisterComponent implements OnInit {
   passwordShown:boolean;
   confirmPasswordShown:boolean;
 
+  loading:boolean;
+  otpLoading:boolean;
+
   constructor(private toastrService:ToastrService, private dialogService:NbDialogService, private router:Router, private apiService:APIService) { 
     this.speciality="1";
     this.passwordShown=false;
     this.confirmPasswordShown=false;
+    this.loading=false;
+    this.otpLoading=false;
   }
 
   ngOnInit() {
@@ -46,6 +51,7 @@ export class RegisterComponent implements OnInit {
   }
 
   registerDoctor(){
+    this.loading=true;
     const formattedPhone=`+91${this.phone}`;
     const phoneNumber=parsePhoneNumberFromString(formattedPhone, "IN");
 
@@ -65,17 +71,22 @@ export class RegisterComponent implements OnInit {
           }).then(data=>{
             this.user=data;
             this.otpDialogRef=this.dialogService.open(this.otpDialog);
+            this.loading=false;
           }).catch(err=>{
             this.toastrService.showToast("danger", "Error", err.message);
+            this.loading=false;
           })
         }else{
           this.toastrService.showToast("danger", "Error", "Passwords do not match");
+          this.loading=false;
         }
       }else{
-        this.toastrService.showToast("danger", "Error", "Please enter a valid phone number")
+        this.toastrService.showToast("danger", "Error", "Please enter a valid phone number");
+        this.loading=false;
       }
     }else{
-      this.toastrService.showToast("danger", "Error", "All fields are compulsory")
+      this.toastrService.showToast("danger", "Error", "All fields are compulsory");
+      this.loading=false;
     }
 
   }
@@ -101,16 +112,20 @@ export class RegisterComponent implements OnInit {
   }
 
   confirmSignUp(){
+    this.otpLoading=true;
     Auth.confirmSignUp(this.email, this.otp).then(data=>{
       this.otpDialogRef.close();
       this.apiService.AddDoctor(this.user.userSub, this.speciality, this.charge).then(()=>{
         this.toastrService.showToast("success", "Sign up successful", "You will be redirected to the login page shortly");
-        this.router.navigate(['/auth/login']);      
+        this.router.navigate(['/auth/login']);
+        this.otpLoading=false;  
       }).catch(err=>{
         this.toastrService.showToast("danger", "Error", err.message);
+        this.otpLoading=false;
       })
     }).catch(err=>{
       this.toastrService.showToast("danger", "Error", err.message);
+      this.otpLoading=false;
     })
   }
 
