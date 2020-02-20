@@ -39,6 +39,7 @@ export class BookOfflineComponent implements OnInit {
               this.formValues.resetForm();
               this.loading=false;
             }).catch(err=>{
+              console.log(err)
               this.loading=false;
               this.toastrService.showToast("danger", "Error", err.message);
             })
@@ -57,6 +58,7 @@ export class BookOfflineComponent implements OnInit {
             this.formValues.resetForm();
             this.loading=false;
           }).catch(err=>{
+            console.log(err)
             this.loading=false;
             this.toastrService.showToast("danger", "Error", err.message);
           })

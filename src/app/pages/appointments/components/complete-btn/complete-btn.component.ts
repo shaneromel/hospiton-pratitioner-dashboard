@@ -22,6 +22,7 @@ export class CompleteBtnComponent implements OnInit {
       this.toastrService.showToast("success", "Success", "Appointment successfully completed");
       this.communicationService.appointmentLoaderEvent.emit(false);
     }).catch(err=>{
+      console.log(err);
       this.communicationService.appointmentLoaderEvent.emit(false);
       this.toastrService.showToast("danger", "Error", err.message);
     })
