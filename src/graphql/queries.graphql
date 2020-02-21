@@ -49,6 +49,36 @@ query GetDoctorById($doctor_id: String!) {
     views
     image
     location
+    schedule {
+      sun {
+        morning
+        evening
+      }
+      mon {
+        morning
+        evening
+      }
+      tue {
+        morning
+        evening
+      }
+      wed {
+        morning
+        evening
+      }
+      thu {
+        morning
+        evening
+      }
+      fri {
+        morning
+        evening
+      }
+      sat {
+        morning
+        evening
+      }
+    }
     reg_council
     reg_no
     reg_year
@@ -139,5 +169,44 @@ query GetCognitoAttributesById($id: ID!, $type: String!) {
     UserLastModifiedDate
     Enabled
     UserStatus
+  }
+}
+query GetChats($user_id: String!) {
+  getChats(user_id: $user_id) {
+    _id
+    message
+    timestamp
+    toId
+    fromId
+    is_read
+  }
+}
+query GetChatUsers($user_id: String!) {
+  getChatUsers(user_id: $user_id) {
+    _id
+    email_verified
+    gender
+    blood_group
+    phone_number_verified
+    marital_status
+    heightincm
+    wallet_id
+    name
+    phone_number
+    family_name
+    email
+    referral_code
+    pending_count
+  }
+}
+query GetConversation($doctor_id: String!, $user_id: String) {
+  getConversation(doctor_id: $doctor_id, user_id: $user_id) {
+    _id
+    fromId
+    message
+    toId
+    timestamp
+    sender
+    is_read
   }
 }

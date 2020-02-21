@@ -23,3 +23,14 @@ subscription AppointmentsChangedSub($doctor_id: String!) {
     }
   }
 }
+subscription MessageReceivedSub($toId: String!) {
+  messageReceivedSub(toId: $toId) {
+    _id
+    fromId
+    message
+    toId
+    timestamp
+    sender
+    is_read
+  }
+}

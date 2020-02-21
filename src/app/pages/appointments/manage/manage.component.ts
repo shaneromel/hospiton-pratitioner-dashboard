@@ -188,7 +188,7 @@ export class ManageComponent implements OnInit {
   start:number;
   end:number;
   loading:boolean;
-
+  latestAppointment:any;
   user:any;
 
   tfilter:string;
@@ -214,6 +214,7 @@ export class ManageComponent implements OnInit {
           this.router.navigate(['/pages/appointments/manage-slot-appointments']);
         }else{
           this.apiService.GetAppointmentsByDoctor(user.username, this.start, this.end, "QUEUE").then(data=>{
+            this.latestAppointment=(data as any)[0];
             this.source.load(data as any);
           }).catch(err=>{
             this.toastrService.showToast("danger", "Error", err.message);
@@ -228,7 +229,9 @@ export class ManageComponent implements OnInit {
                   this.toastrService.showToast("danger", "Error", err.message);
                 })
               }else{
-                this.source.prepend(appointment);
+                this.latestAppointment=appointment;
+                console.log(appointment);
+                this.source.add(appointment);
               }
             })
           })

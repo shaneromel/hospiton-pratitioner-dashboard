@@ -116,6 +116,17 @@ export type AddHospitalMutation = {
   code: string;
 };
 
+export type SendMessageMutation = {
+  __typename: "Conversation";
+  _id: string;
+  fromId: string;
+  message: string;
+  toId: string;
+  timestamp: number;
+  sender: string | null;
+  is_read: boolean;
+};
+
 export type GetAppointmentsByDoctorQuery = {
   __typename: "Appointment";
   appointment_type: string;
@@ -157,6 +168,44 @@ export type GetDoctorByIdQuery = {
   views: number | null;
   image: string | null;
   location: Array<number | null> | null;
+  schedule: {
+    __typename: "Schedule";
+    sun: {
+      __typename: "Slot";
+      morning: Array<number | null> | null;
+      evening: Array<number | null> | null;
+    } | null;
+    mon: {
+      __typename: "Slot";
+      morning: Array<number | null> | null;
+      evening: Array<number | null> | null;
+    } | null;
+    tue: {
+      __typename: "Slot";
+      morning: Array<number | null> | null;
+      evening: Array<number | null> | null;
+    } | null;
+    wed: {
+      __typename: "Slot";
+      morning: Array<number | null> | null;
+      evening: Array<number | null> | null;
+    } | null;
+    thu: {
+      __typename: "Slot";
+      morning: Array<number | null> | null;
+      evening: Array<number | null> | null;
+    } | null;
+    fri: {
+      __typename: "Slot";
+      morning: Array<number | null> | null;
+      evening: Array<number | null> | null;
+    } | null;
+    sat: {
+      __typename: "Slot";
+      morning: Array<number | null> | null;
+      evening: Array<number | null> | null;
+    } | null;
+  } | null;
   reg_council: string | null;
   reg_no: string | null;
   reg_year: number | null;
@@ -251,6 +300,45 @@ export type GetCognitoAttributesByIdQuery = {
   UserStatus: string | null;
 };
 
+export type GetChatsQuery = {
+  __typename: "Chat";
+  _id: string;
+  message: string;
+  timestamp: number;
+  toId: string;
+  fromId: string;
+  is_read: boolean;
+};
+
+export type GetChatUsersQuery = {
+  __typename: "ChatUser";
+  _id: string;
+  email_verified: boolean;
+  gender: string;
+  blood_group: string | null;
+  phone_number_verified: boolean | null;
+  marital_status: string | null;
+  heightincm: string | null;
+  wallet_id: string;
+  name: string;
+  phone_number: string;
+  family_name: string;
+  email: string;
+  referral_code: string;
+  pending_count: number | null;
+};
+
+export type GetConversationQuery = {
+  __typename: "Conversation";
+  _id: string;
+  fromId: string;
+  message: string;
+  toId: string;
+  timestamp: number;
+  sender: string | null;
+  is_read: boolean;
+};
+
 export type AppointmentsChangedSubSubscription = {
   __typename: "Appointment";
   appointment_type: string;
@@ -274,6 +362,17 @@ export type AppointmentsChangedSubSubscription = {
     start: number | null;
     end: number | null;
   } | null;
+};
+
+export type MessageReceivedSubSubscription = {
+  __typename: "Conversation";
+  _id: string;
+  fromId: string;
+  message: string;
+  toId: string;
+  timestamp: number;
+  sender: string | null;
+  is_read: boolean;
 };
 
 @Injectable({
@@ -527,6 +626,35 @@ export class APIService {
     )) as any;
     return <AddHospitalMutation>response.data.addHospital;
   }
+  async SendMessage(
+    fromId: string,
+    message: string,
+    toId?: string
+  ): Promise<SendMessageMutation> {
+    const statement = `mutation SendMessage($fromId: String!, $toId: String, $message: String!) {
+        sendMessage(fromId: $fromId, toId: $toId, message: $message) {
+          __typename
+          _id
+          fromId
+          message
+          toId
+          timestamp
+          sender
+          is_read
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      fromId,
+      message
+    };
+    if (toId) {
+      gqlAPIServiceArguments.toId = toId;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <SendMessageMutation>response.data.sendMessage;
+  }
   async GetAppointmentsByDoctor(
     doctor_id: string,
     start?: number,
@@ -575,6 +703,81 @@ export class APIService {
       graphqlOperation(statement, gqlAPIServiceArguments)
     )) as any;
     return <GetAppointmentsByDoctorQuery>response.data.getAppointmentsByDoctor;
+  }
+  async GetDoctorById(doctor_id: string): Promise<GetDoctorByIdQuery> {
+    const statement = `query GetDoctorById($doctor_id: String!) {
+        getDoctorById(doctor_id: $doctor_id) {
+          __typename
+          rating
+          charge
+          _id
+          rating_count
+          is_active
+          speciality
+          email_verified
+          name
+          phone_number_verified
+          phone_number
+          email
+          views
+          image
+          location
+          schedule {
+            __typename
+            sun {
+              __typename
+              morning
+              evening
+            }
+            mon {
+              __typename
+              morning
+              evening
+            }
+            tue {
+              __typename
+              morning
+              evening
+            }
+            wed {
+              __typename
+              morning
+              evening
+            }
+            thu {
+              __typename
+              morning
+              evening
+            }
+            fri {
+              __typename
+              morning
+              evening
+            }
+            sat {
+              __typename
+              morning
+              evening
+            }
+          }
+          reg_council
+          reg_no
+          reg_year
+          degree
+          appointment_type
+          slot_duration
+          morning_limit
+          evening_limit
+          hospital_id
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      doctor_id
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetDoctorByIdQuery>response.data.getDoctorById;
   }
   async GetSpecialities(): Promise<GetSpecialitiesQuery> {
     const statement = `query GetSpecialities {
@@ -750,6 +953,81 @@ export class APIService {
       response.data.getCognitoAttributesById
     );
   }
+  async GetChats(user_id: string): Promise<GetChatsQuery> {
+    const statement = `query GetChats($user_id: String!) {
+        getChats(user_id: $user_id) {
+          __typename
+          _id
+          message
+          timestamp
+          toId
+          fromId
+          is_read
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      user_id
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetChatsQuery>response.data.getChats;
+  }
+  async GetChatUsers(user_id: string): Promise<GetChatUsersQuery> {
+    const statement = `query GetChatUsers($user_id: String!) {
+        getChatUsers(user_id: $user_id) {
+          __typename
+          _id
+          email_verified
+          gender
+          blood_group
+          phone_number_verified
+          marital_status
+          heightincm
+          wallet_id
+          name
+          phone_number
+          family_name
+          email
+          referral_code
+          pending_count
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      user_id
+    };
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetChatUsersQuery>response.data.getChatUsers;
+  }
+  async GetConversation(
+    doctor_id: string,
+    user_id?: string
+  ): Promise<GetConversationQuery> {
+    const statement = `query GetConversation($doctor_id: String!, $user_id: String) {
+        getConversation(doctor_id: $doctor_id, user_id: $user_id) {
+          __typename
+          _id
+          fromId
+          message
+          toId
+          timestamp
+          sender
+          is_read
+        }
+      }`;
+    const gqlAPIServiceArguments: any = {
+      doctor_id
+    };
+    if (user_id) {
+      gqlAPIServiceArguments.user_id = user_id;
+    }
+    const response = (await API.graphql(
+      graphqlOperation(statement, gqlAPIServiceArguments)
+    )) as any;
+    return <GetConversationQuery>response.data.getConversation;
+  }
   AppointmentsChangedSubListener(
     doctor_id:string
   ): Observable<
@@ -786,75 +1064,21 @@ export class APIService {
   ) as Observable<AppointmentsChangedSubSubscription>;
   }
 
-  async GetDoctorById(doctor_id: string): Promise<GetDoctorByIdQuery> {
-    const statement = `query GetDoctorById($doctor_id: String!) {
-        getDoctorById(doctor_id: $doctor_id) {
+  MessageReceivedSubListener(toId:string): Observable<
+    MessageReceivedSubSubscription
+  >{return API.graphql(
+    graphqlOperation(
+      `subscription MessageReceivedSub($toId: String!) {
+        messageReceivedSub(toId: $toId) {
           __typename
-          rating
-          charge
           _id
-          rating_count
-          is_active
-          speciality
-          email_verified
-          name
-          phone_number_verified
-          phone_number
-          email
-          views
-          image
-          location
-          reg_council
-          reg_no
-          reg_year
-          degree
-          schedule{
-            sun{
-              morning
-              evening
-            }
-            mon{
-              morning
-              evening
-            }
-            tue{
-              morning
-              evening
-            }
-            thu{
-              morning
-              evening
-            }
-            wed{
-              morning
-              evening
-            }
-            thu{
-              morning
-              evening
-            }
-            fri{
-              morning
-              evening
-            }
-            sat{
-              morning
-              evening
-            }
-          }
-          appointment_type
-          slot_duration
-          morning_limit
-          evening_limit
-          hospital_id
+          fromId
+          message
+          toId
+          timestamp
+          sender
         }
-      }`;
-    const gqlAPIServiceArguments: any = {
-      doctor_id
-    };
-    const response = (await API.graphql(
-      graphqlOperation(statement, gqlAPIServiceArguments)
-    )) as any;
-    return <GetDoctorByIdQuery>response.data.getDoctorById;
-  }
+      }`, {toId:toId}
+    )
+  ) as Observable<MessageReceivedSubSubscription>;}
 }

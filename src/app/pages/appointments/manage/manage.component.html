@@ -10,6 +10,12 @@
             <option value="2">All time</option>
           </select>
         </div>
+        <div *ngIf="latestAppointment" style="border: 1px solid #38ff8b; border-radius: 5px;" class="col-md-6 offset-md-3">
+          <div style="padding: 5px;" class="container">
+            <h5>{{latestAppointment?.user_name}}</h5>
+          </div>
+
+        </div>
       </div>
     </div>
     <ng2-smart-table [settings]="settings" [source]="source" (deleteConfirm)="onDeleteConfirm($event)">

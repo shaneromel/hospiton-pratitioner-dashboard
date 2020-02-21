@@ -77,6 +77,10 @@ const routes: Routes = [{
       loadChildren:()=>import("./profile/profile.module").then(m=>m.ProfileModule)
     },
     {
+      path:"chats",
+      loadChildren:()=>import("./chat/chat.module").then(m=>m.ChatModule)
+    },
+    {
       path: '',
       redirectTo: 'dashboard',
       pathMatch: 'full',

@@ -250,6 +250,16 @@ export class PagesMenu{
       ]
     },
     {
+      title:"Chats",
+      icon:"person-outline",
+      children:[
+        {
+          title:"Manage chats",
+          link:"/pages/chats/manage"
+        }
+      ]
+    },
+    {
       title:"Profile",
       icon:"person-outline",
       children:[

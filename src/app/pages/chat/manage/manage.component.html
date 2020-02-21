@@ -1,0 +1,31 @@
+<nb-card>
+  <nb-card-header>Chats: </nb-card-header>
+  <nb-card-body>
+    <div class="row">
+      <div class="col-md-4">
+        <h4>Patients: </h4>
+        <hr>
+        <ul class="list-group">
+          <li (click)="selectUser(user)" *ngFor="let user of chatUsers" [ngClass]="selectedUser?._id === user._id ? 'list-group-item active d-flex justify-content-between align-items-center' : 'list-group-item d-flex justify-content-between align-items-center'" >
+            {{user.name}}
+            <span  class="badge badge-primary badge-pill">{{user.pending_count ? user.pending_count : 0}}</span>
+          </li>
+        </ul>
+      </div>
+      <div *ngIf="selectedUser" class="col-md-8">
+        <nb-chat [title]="selectedUser?.name" size="large">
+          <nb-chat-message *ngFor="let convo of conversation"
+                    [type]="'text'"
+                    [message]="convo.message"
+                    [reply]="convo.fromId === user.username"
+                    [sender]="convo.fromId === user.username ? 'You' : convo.sender"
+                    [date]="convo.timestamp"
+                    >
+          </nb-chat-message>
+          <nb-chat-form (send)="sendMessage($event)" [dropFiles]="true">
+          </nb-chat-form>
+        </nb-chat>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>

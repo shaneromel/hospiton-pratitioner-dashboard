@@ -108,3 +108,14 @@ mutation AddHospital($data: HospitalInputType) {
     code
   }
 }
+mutation SendMessage($fromId: String!, $toId: String, $message: String!) {
+  sendMessage(fromId: $fromId, toId: $toId, message: $message) {
+    _id
+    fromId
+    message
+    toId
+    timestamp
+    sender
+    is_read
+  }
+}
