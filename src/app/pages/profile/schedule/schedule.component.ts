@@ -243,12 +243,15 @@ export class ScheduleComponent implements OnInit {
     let schedule=[];
 
     scheduleKeys.forEach(a=>{
-      const d={
-        day:a,
-        morning:this.doctor.schedule[a] ? this.doctor.schedule[a].morning : "NA",
-        evening: this.doctor.schedule[a] ? this.doctor.schedule[a].evening : "NA"
-      };
-      schedule.push(d);
+
+      if(a!="__typename"){
+        const d={
+          day:a,
+          morning:this.doctor.schedule[a] ? this.doctor.schedule[a].morning : "NA",
+          evening: this.doctor.schedule[a] ? this.doctor.schedule[a].evening : "NA"
+        };
+        schedule.push(d);
+      }
     });
 
     this.schedulePreviewSource.load(schedule).then(()=>{
